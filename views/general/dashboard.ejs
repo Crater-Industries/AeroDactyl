@@ -1,0 +1,305 @@
+<%- include('../components/head') %>
+
+<body class="bg-[#10181e]" style="font-family: 'Space Grotesk', sans-serif;">
+ 
+  <%- include('../components/modal') %>
+  <div>
+    <%- include('../components/navigation') %>
+    <div class="md:pl-64 flex flex-col flex-1 min-h-screen"> 
+      <%- include('../components/header') %>
+      <main class="flex-1 pb-6 md:pb-8">
+        <div class="py-2 md:py-4">
+          <% /* Skeleton loader, lasts about 0.3s to let the page content load */ %>
+          <%- include('../components/skeleton') %>
+          <div class="hidden max-w-screen-2xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8" id="content">
+         
+            <div class="bg-gradient-to-r from-[#162027]/80 to-[#162027]/30 rounded-xl md:rounded-2xl p-4 md:p-6 mb-4 md:mb-6 border-t border-white/5 shadow-lg">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="mb-3 md:mb-0">
+                  <h2 class="text-lg md:text-xl font-semibold text-white tracking-tight"><%= req.session.userinfo.global_name %>, welcome back! 👋</h2>
+                  <p class="text-xs md:text-sm font-normal text-zinc-400 mt-1">View general information related to your resource quota, account and servers.</p>
+                </div>
+                <a href="../panel" class="inline-flex items-center rounded-full bg-[#0a9875] px-4 md:px-5 py-1.5 md:py-2 text-xs md:text-sm font-medium text-white shadow-sm hover:bg-[#0cae86] focus:outline-none focus:ring-2 focus:ring-[#0a9875] focus:ring-offset-2 focus:ring-offset-[#162027] transition-all duration-200">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 md:size-5 mr-1.5 md:mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                  </svg>                                             
+                  Manage your servers
+                </a>
+              </div>
+            </div>
+            
+            <%
+               let ram = 0;
+               let disk = 0;
+               let cpu = 0;
+               let servers = pterodactyl.relationships.servers.data.length;
+               for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
+                  ram = ram + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0);
+                  disk = disk + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0);
+                  cpu = cpu + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0);
+               }
+            %>
+            <% 
+            // Calculate resource usage and percentages
+            let totalMemory = packages.ram + extraresources.ram;
+            let usedMemory = ram;
+            let memoryLeft = totalMemory - usedMemory;
+            let memoryLeftPercent = (memoryLeft / totalMemory) * 100;
+            
+            let totaldisk = packages.disk + extraresources.disk;
+            let useddisk = disk;
+            let diskLeft = totaldisk - useddisk;
+            let diskLeftPercent = (diskLeft / totaldisk) * 100;
+            
+            let totalservers = packages.servers + extraresources.servers;
+            let usedservers = servers;
+            let serversLeft = totalservers - usedservers;
+            let serversLeftPercent = (serversLeft / totalservers) * 100;
+            
+            let totalCpu = packages.cpu + extraresources.cpu;
+            let usedCpu = cpu;
+            let cpuLeft = totalCpu - usedCpu;
+            let cpuLeftPercent = (cpuLeft / totalCpu) * 100;
+            %>
+            
+          
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-5 mb-4 md:mb-6">
+             
+              <div class="bg-gradient-to-br from-[#162027]/80 to-[#162027]/40 rounded-xl md:rounded-2xl p-3 md:p-5 border-t border-white/5 shadow-md hover:shadow-lg transition-all duration-200 group flex flex-col h-full">
+                <div class="flex items-center justify-between mb-2 md:mb-3">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 bg-[#0a9875]/10 p-1.5 md:p-2.5 rounded-xl group-hover:bg-[#0a9875]/20 transition-all duration-200">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 md:w-5 md:h-5 text-[#0a9875]">
+                        <path d="M6 19v-3"/>
+                        <path d="M10 19v-3"/>
+                        <path d="M14 19v-3"/>
+                        <path d="M18 19v-3"/>
+                        <path d="M8 11V9"/>
+                        <path d="M16 11V9"/>
+                        <path d="M12 11V9"/>
+                        <path d="M2 15h20"/>
+                        <path d="M2 7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v1.1a2 2 0 0 0 0 3.837V17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-5.1a2 2 0 0 0 0-3.837Z"/>
+                      </svg>
+                    </div>
+                    <h3 class="ml-2.5 text-sm font-medium text-white/90">Memory</h3>
+                  </div>
+                  <div class="text-right text-sm text-white/80"><%= ram %> / <%= totalMemory %> MB</div>
+                </div>
+                
+                <div class="bg-gray-700/30 rounded-full h-1.5 overflow-hidden mb-1.5">
+                  <div class="bg-gradient-to-r from-[#0a9875] to-[#0cae86] h-1.5 rounded-full" style="width: <%= 100 - memoryLeftPercent %>%"></div>
+                </div>
+                
+                <div class="text-xs text-zinc-400">
+                  <%= (memoryLeft/1024).toFixed(2) %> GB available
+                </div>
+              </div>
+              
+         
+              <div class="bg-gradient-to-br from-[#162027]/80 to-[#162027]/40 rounded-xl md:rounded-2xl p-3 md:p-5 border-t border-white/5 shadow-md hover:shadow-lg transition-all duration-200 group flex flex-col h-full">
+                <div class="flex items-center justify-between mb-2 md:mb-3">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 bg-[#0a9875]/10 p-1.5 md:p-2.5 rounded-xl group-hover:bg-[#0a9875]/20 transition-all duration-200">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 md:w-5 md:h-5 text-[#0a9875]">
+                        <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                        <path d="m3.3 7 8.7 5 8.7-5"/>
+                        <path d="M12 22V12"/>
+                      </svg>
+                    </div>
+                    <h3 class="ml-2.5 text-sm font-medium text-white/90">CPU</h3>
+                  </div>
+                  <div class="text-right text-sm text-white/80"><%= cpu %>% / <%= totalCpu %>%</div>
+                </div>
+                
+                <div class="bg-gray-700/30 rounded-full h-1.5 overflow-hidden mb-1.5">
+                  <div class="bg-gradient-to-r from-[#0a9875] to-[#0cae86] h-1.5 rounded-full" style="width: <%= 100 - cpuLeftPercent %>%"></div>
+                </div>
+                
+                <div class="text-xs text-zinc-400">
+                  <%= (cpuLeft/100).toFixed(2) %> core(s) available
+                </div>
+              </div>
+              
+           
+              <div class="bg-gradient-to-br from-[#162027]/80 to-[#162027]/40 rounded-xl md:rounded-2xl p-3 md:p-5 border-t border-white/5 shadow-md hover:shadow-lg transition-all duration-200 group flex flex-col h-full">
+                <div class="flex items-center justify-between mb-2 md:mb-3">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 bg-[#0a9875]/10 p-1.5 md:p-2.5 rounded-xl group-hover:bg-[#0a9875]/20 transition-all duration-200">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 md:w-5 md:h-5 text-[#0a9875]">
+                        <path d="M4.75 3A1.75 1.75 0 0 0 3 4.75v2.752l.104-.002h13.792c.035 0 .07 0 .104.002V6.75A1.75 1.75 0 0 0 15.25 5h-3.836a.25.25 0 0 1-.177-.073L9.823 3.513A1.75 1.75 0 0 0 8.586 3H4.75ZM3.104 9a1.75 1.75 0 0 0-1.673 2.265l1.385 4.5A1.75 1.75 0 0 0 4.488 17h11.023a1.75 1.75 0 0 0 1.673-1.235l1.384-4.5A1.75 1.75 0 0 0 16.896 9H3.104Z" />
+                      </svg>                      
+                    </div>
+                    <h3 class="ml-2.5 text-sm font-medium text-white/90">Storage</h3>
+                  </div>
+                  <div class="text-right text-sm text-white/80"><%= disk %> / <%= totaldisk %> MB</div>
+                </div>
+                
+                <div class="bg-gray-700/30 rounded-full h-1.5 overflow-hidden mb-1.5">
+                  <div class="bg-gradient-to-r from-[#0a9875] to-[#0cae86] h-1.5 rounded-full" style="width: <%= 100 - diskLeftPercent %>%"></div>
+                </div>
+                
+                <div class="text-xs text-zinc-400">
+                  <%= (diskLeft/1024).toFixed(2) %> GB available
+                </div>
+              </div>
+              
+     
+              <div class="bg-gradient-to-br from-[#162027]/80 to-[#162027]/40 rounded-xl md:rounded-2xl p-3 md:p-5 border-t border-white/5 shadow-md hover:shadow-lg transition-all duration-200 group flex flex-col h-full">
+                <div class="flex items-center justify-between mb-2 md:mb-3">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 bg-[#0a9875]/10 p-1.5 md:p-2.5 rounded-xl group-hover:bg-[#0a9875]/20 transition-all duration-200">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 md:w-5 md:h-5 text-[#0a9875]">
+                        <path d="M4.464 3.162A2 2 0 0 1 6.28 2h7.44a2 2 0 0 1 1.816 1.162l1.154 2.5c.067.145.115.291.145.438A3.508 3.508 0 0 0 16 6H4c-.288 0-.568.035-.835.1.03-.147.078-.293.145-.438l1.154-2.5Z" />
+                        <path fill-rule="evenodd" d="M2 9.5a2 2 0 0 1 2-2h12a2 2 0 1 1 0 4H4a2 2 0 0 1-2-2Zm13.24 0a.75.75 0 0 1 .75-.75H16a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75h-.01a.75.75 0 0 1-.75-.75V9.5Zm-2.25-.75a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75H13a.75.75 0 0 0 .75-.75V9.5a.75.75 0 0 0-.75-.75h-.01ZM2 15a2 2 0 0 1 2-2h12a2 2 0 1 1 0 4H4a2 2 0 0 1-2-2Zm13.24 0a.75.75 0 0 1 .75-.75H16a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75h-.01a.75.75 0 0 1-.75-.75V15Zm-2.25-.75a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75H13a.75.75 0 0 0 .75-.75V15a.75.75 0 0 0-.75-.75h-.01Z" clip-rule="evenodd" />
+                      </svg>                                         
+                    </div>
+                    <h3 class="ml-2.5 text-sm font-medium text-white/90">Servers</h3>
+                  </div>
+                  <div class="text-right text-sm text-white/80"><%= servers %> / <%= totalservers %></div>
+                </div>
+                
+                <div class="bg-gray-700/30 rounded-full h-1.5 overflow-hidden mb-1.5">
+                  <div class="bg-gradient-to-r from-[#0a9875] to-[#0cae86] h-1.5 rounded-full" style="width: <%= 100 - serversLeftPercent %>%"></div>
+                </div>
+                
+                <div class="text-xs text-zinc-400">
+                  <%= serversLeft %> slots available
+                </div>
+              </div>
+            </div>
+            
+   
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
+             
+              <div class="md:col-span-2 bg-cover bg-center bg-no-repeat rounded-xl md:rounded-2xl overflow-hidden border-t border-white/5 shadow-lg relative" 
+                   style="background-image: url('/assets/Minecraft.webp');">
+                <div class="absolute inset-0 w-full h-full bg-[#10181e]/60"></div>
+                <div class="relative p-4 md:p-8 flex flex-col items-center justify-center text-center h-full">
+                  <h2 class="text-xl md:text-2xl font-bold text-white mb-1 md:mb-2">Create a server</h2>
+                  <p class="text-white/70 text-xs md:text-md mb-4 md:mb-6 max-w-md">Create your own free Minecraft server today with just a few clicks.</p>
+                  <button onclick="toggleModal()" class="bg-white/10 backdrop-blur-sm border border-white/10 hover:bg-white/20 text-white font-medium py-2 md:py-2.5 px-4 md:px-6 rounded-lg md:rounded-xl transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#0a9875] focus:ring-offset-2 focus:ring-offset-[#10181e]/50 shadow-lg">
+                    <span class="flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5 mr-1.5 md:mr-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                      </svg>
+                      New Server
+                    </span>
+                  </button>
+                </div>
+              </div>
+              
+         
+              <div class="bg-[#162027]/30 rounded-xl md:rounded-2xl border-t border-white/5 shadow-md p-4 md:p-6">
+                <div class="flex items-center justify-between mb-3 md:mb-4">
+                  <h3 class="text-base md:text-lg font-semibold text-white">Daily Reward</h3>
+                  <div class="bg-[#0a9875]/10 p-1 md:p-1.5 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5 text-[#0a9875]">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 11.25v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 1 0 9.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1 1 14.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
+                    </svg>
+                  </div>
+                </div>
+                <p class="text-xs md:text-sm text-zinc-400 mb-3 md:mb-4">Each day, you can claim <%= settings.api.client.coins.dailyReward %> <%= settings.website.coins %> for free.</p>
+                <p class="reward-status-text text-xs md:text-sm text-zinc-300 mb-3 md:mb-4">You can claim next in -.</p>
+                <button type="button" class="claim-reward-button w-full py-2 md:py-2.5 px-3 md:px-4 bg-[#0a9875] hover:bg-[#0cae86] rounded-lg transition-all duration-200 flex items-center justify-center gap-1.5 md:gap-2 text-white text-xs md:text-sm font-medium shadow-md shadow-[#0a9875]/10">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 md:size-5 mr-0.5 md:mr-1">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 11.25v8.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5v-8.25M12 4.875A2.625 2.625 0 1 0 9.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1 1 14.625 7.5H12m0 0V21m-8.625-9.75h18c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125h-18c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
+                  </svg>
+                  Claim Reward
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <%- include('../components/footer') %>
+    </div>
+  </div>
+                    
+  <script>
+    function toggleModal() {
+      window.dispatchEvent(new CustomEvent('toggle-modal'));
+    }
+
+    function selectLocation(name) {
+      const previous = document.querySelector('.location-card.card-selected');
+      if (previous) {
+        previous.classList.remove('card-selected');
+      }
+      const selected = document.querySelector(`.location-card[data-name="${name}"]`);
+      selected.classList.add('card-selected');
+      document.getElementById('InputLoc').value = name;
+    }
+  
+    function selectEgg(name) {
+      const previous = document.querySelector('.egg-card.card-selected');
+      if (previous) {
+        previous.classList.remove('card-selected');
+      }
+      const selected = document.querySelector(`.egg-card[data-name="${name}"]`);
+      selected.classList.add('card-selected');
+      document.getElementById('InputEgg').value = name;
+    }
+  
+    async function submitNew() {
+      let name = encodeURIComponent(document.getElementById("InputName").value);
+      let egg = encodeURIComponent(document.getElementById("InputEgg").value);
+      let ram = encodeURIComponent(document.getElementById("InputRAM").value * 1024);
+      let disk = encodeURIComponent(document.getElementById("InputDisk").value * 1024);
+      let cpu = encodeURIComponent(document.getElementById("InputCPU").value * 100);
+      let location = encodeURIComponent(document.getElementById("InputLoc").value);
+      document.location.href = `/create?name=${name}&egg=${egg}&ram=${ram}&disk=${disk}&cpu=${cpu}&location=${location}`;
+    };
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      const claimButton = document.querySelector('.claim-reward-button');
+      const statusText = document.querySelector('.reward-status-text');
+    
+      // Function to update the status of the next reward claim
+      function updateRewardStatus() {
+        fetch('/reward-status')
+          .then(response => response.json())
+          .then(data => {
+            if (data.claimable) {
+              statusText.textContent = 'You can claim your <%= settings.api.client.coins.dailyReward %> <%= settings.website.coins %> now!';
+              statusText.classList.add('text-[#0a9875]');
+              claimButton.disabled = false;
+              claimButton.classList.remove("opacity-50");
+            } else {
+              claimButton.disabled = true;
+              claimButton.classList.add("opacity-50");
+              const nextClaimInMinutes = Math.ceil(data.nextClaimIn / 60000);
+              statusText.textContent = `You can claim next in ${nextClaimInMinutes} minutes.`;
+              statusText.classList.remove('text-[#0a9875]');
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            statusText.textContent = 'Failed to retrieve reward status.';
+          });
+      }
+    
+      // Event listener for the claim button
+      claimButton.addEventListener('click', function() {
+        fetch('/claim-reward', { method: 'POST' })
+          .then(response => {
+            if (response.ok) {
+              return response.text();
+            } else {
+              throw new Error('Reward already claimed or another error occurred.');
+            }
+          })
+          .then(message => {
+            location.reload();
+          })
+          .catch(error => {
+            alert(error.message);
+            updateRewardStatus();
+          });
+      });
+    
+      // Update reward status on page load and every minute to keep it synced
+      updateRewardStatus();
+      setInterval(updateRewardStatus, 60000);  // Update status every minute
+    });
+  </script>
+</body>

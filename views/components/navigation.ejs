@@ -1,0 +1,337 @@
+<!-- Begin loading resources -->
+<script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/nanobar/0.4.2/nanobar.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.10/cdn.js" integrity="sha512-HmVkzN2y1iKGh8xS5D39FSs+D1rCvY/dM5A2T7pSGyJlqzrML1X0dgyx3ynSnWbTuKlL8i6V8XQdmu+CnguiRg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<style>
+  .alertify-notifier .ajs-message.ajs-success {
+    color: #71747a;
+    padding: 13px 7px;
+    background: #e5e7eb;
+    border-radius: 24px;
+    text-align: center;
+    font-weight: 500;
+  }
+</style>
+<style>
+  .spinner {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    border: 3px solid #474c55;
+    border-radius: 50%;
+    border-top: 3px solid white;
+    width: 22px;
+    height: 22px;
+    -webkit-animation: spin 0.5s linear infinite;
+    animation: spin 0.5s linear infinite;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+<div id="spinner" class="hidden spinner mt-2 mr-2"></div>
+
+<button type="button" id="mobile-menu-button" class="md:hidden fixed top-4 left-4 z-50 text-gray-400 hover:text-white focus:outline-none bg-[#0f1923]/80 backdrop-blur-sm p-2 rounded-lg">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+  </svg>
+</button>
+
+<div id="sidebar" class="transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-40">
+  <div class="flex-1 flex flex-col min-h-0 object-cover bg-[#0f1923] md:bg-transparent border-dashed border-r-2 border-[#162027]">
+    <div class="flex-1 flex flex-col p-4 overflow-y-auto">
+      <div class="md:hidden flex justify-end mb-2">
+        <button type="button" id="close-sidebar-button" class="text-gray-400 hover:text-white focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="flex items-center mb-6 pl-4 pt-4">
+        <div class="w-10 h-10 rounded-lg flex items-center justify-center mr-3">
+          <img src="<%= settings.logo %>" alt="<%= settings.name %> Logo" class="h-full w-auto object-contain">
+        </div>
+        <span class="text-white text-xl font-semibold"><%= settings.name %></span>
+      </div>
+      
+      <div class="border-t border-[#162027] mb-6"></div>
+
+      <nav class="hs-accordion-group navbar-nav flex-1 space-y-2 px-2" data-hs-accordion-always-open>
+        <div class="mb-6">
+          <span class="uppercase text-gray-400 tracking-widest text-xs pb-3 block">MAIN</span>
+          
+          <a href="../dashboard" class="nav-link transition text-gray-400 backdrop-blur hover:text-white group flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 mr-3">
+              <rect width="7" height="9" x="3" y="3" rx="1"/>
+              <rect width="7" height="5" x="14" y="3" rx="1"/>
+              <rect width="7" height="9" x="14" y="12" rx="1"/>
+              <rect width="7" height="5" x="3" y="16" rx="1"/>
+            </svg>          
+            Dashboard
+          </a>
+          
+          <a href="../servers" class="nav-link transition text-gray-400 backdrop-blur hover:text-white group flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 mr-3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 17.25v-.228a4.5 4.5 0 0 0-.12-1.03l-2.268-9.64a3.375 3.375 0 0 0-3.285-2.602H7.923a3.375 3.375 0 0 0-3.285 2.602l-2.268 9.64a4.5 4.5 0 0 0-.12 1.03v.228m19.5 0a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3m19.5 0a3 3 0 0 0-3-3H5.25a3 3 0 0 0-3 3m16.5 0h.008v.008h-.008v-.008Zm-3 0h.008v.008h-.008v-.008Z" />
+            </svg>                
+            Servers
+          </a>
+          
+          <a href="../store" class="nav-link transition text-gray-400 backdrop-blur hover:text-white group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 mr-3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+            </svg>
+            Upgrade
+          </a>
+        </div>
+        
+        <div class="mb-6">
+          <span class="uppercase text-gray-400 tracking-widest text-xs pb-3 block">ACCOUNT</span>
+          
+          <a href="../profile" class="nav-link transition text-gray-400 backdrop-blur hover:text-white group flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 mr-3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" />
+            </svg>                            
+            Profile
+          </a>
+          
+          <a href="../security" class="nav-link transition text-gray-400 backdrop-blur hover:text-white group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 mr-3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+            </svg>                       
+            Credentials
+          </a>
+        </div>
+        
+        <div class="mb-6">
+          <span class="uppercase text-gray-400 tracking-widest text-xs pb-3 block">ECONOMY</span>
+          
+          <a href="../referrals" class="nav-link transition text-gray-400 backdrop-blur hover:text-white group flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 mr-3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
+            </svg>
+            Referrals
+          </a>
+          
+          <% if (settings.linkvertise.enabled == true) { %>
+            <a href="../lv" class="nav-link transition text-gray-400 backdrop-blur hover:text-white group flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 mr-3">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+              </svg>
+              Linkvertise
+            </a>
+          <% } %>
+          
+          <% if (settings.api.afk.enabled == true) { %>
+            <a href="../afk" class="nav-link transition text-gray-400 backdrop-blur hover:text-white group flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 mr-3">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+              AFK Page
+            </a>
+          <% } %>
+          
+          <a href="../transfer" class="nav-link transition text-gray-400 backdrop-blur hover:text-white group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 mr-3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+            </svg>
+            Transfer
+          </a>
+        </div>
+        
+        <% if (pterodactyl.root_admin == true) { %>
+          <div class="mb-6">
+            <span class="uppercase text-gray-400 tracking-widest text-xs pb-3 block">ADMIN</span>
+            
+            <a href="../admin" class="nav-link transition text-gray-400 backdrop-blur hover:text-white group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5 mr-3">
+                <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>                   
+              Admin Panel
+            </a>
+          </div>
+        <% } %>
+      </nav>
+    </div>
+    
+    <div class="border-t border-[#162027] pt-4 pb-4 px-4 mt-auto">
+      <a href="<%= settings.website.discord %>" target="_blank" class="text-gray-400 hover:text-white flex items-center mb-2 text-xs">
+        <span>Discord Support</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-1">
+          <path d="M7 7h10v10"/>
+          <path d="M7 17 17 7"/>
+        </svg>
+      </a>
+      
+      <a href="<%= settings.website.url %>" target="_blank" class="text-gray-400 hover:text-white flex items-center text-xs">
+        <span>Main Website</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-1">
+          <path d="M7 7h10v10"/>
+          <path d="M7 17 17 7"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden md:hidden"></div>
+
+<%- include('../components/search') %>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Mobile menu functionality
+    const sidebar = document.getElementById('sidebar');
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const closeSidebarButton = document.getElementById('close-sidebar-button');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    
+    function openSidebar() {
+      sidebar.classList.remove('-translate-x-full');
+      sidebarOverlay.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+    }
+    
+    function closeSidebar() {
+      sidebar.classList.add('-translate-x-full');
+      sidebarOverlay.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    }
+    
+    mobileMenuButton.addEventListener('click', openSidebar);
+    closeSidebarButton.addEventListener('click', closeSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebar);
+    
+    // Close sidebar when clicking a link on mobile
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+      link.addEventListener('click', function() {
+        if (window.innerWidth < 768) {
+          closeSidebar();
+        }
+      });
+    });
+    
+    // Active link highlighting
+    var currentPageUrl = window.location.href;
+    
+    // Loop through each navigation link
+    navLinks.forEach(function(link) {
+      // Get the href attribute of the link
+      var linkUrl = link.getAttribute('href');
+      
+      // Check if the current page URL contains the link URL
+      if (currentPageUrl.includes(linkUrl.replace('../', '/'))) {
+        // Remove all existing classes
+        link.className = 'nav-link';
+        
+        // Add the specified classes
+        link.classList.add(
+          'transition',
+          'text-[#0a9875]',
+          'bg-[#0a9875]/5',
+          'shadow',
+          'group',
+          'flex',
+          'items-center',
+          'px-3',
+          'py-2',
+          'text-sm',
+          'font-semibold',
+          'rounded-lg'
+        );
+      }
+    });
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+      if (window.innerWidth >= 768) {
+        sidebar.classList.remove('-translate-x-full');
+        sidebarOverlay.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+      } else if (!sidebar.classList.contains('-translate-x-full')) {
+        // If sidebar is open on mobile and window is resized to mobile
+        closeSidebar();
+      }
+    });
+  });
+</script>
+
+<script>
+  var options = {
+    classname: 'loadingbar',
+    id: 'loadingbar'
+  };
+  var nanobar = new Nanobar(options);
+  // Show the spinner with a smooth transition
+  var spinner = document.getElementById('spinner');
+  spinner.style.opacity = '1';
+  // Simulate a slower loading progress
+  function simulateLoading() {
+    nanobar.go(10); // Change this value to control the loading speed
+    setTimeout(function() {
+      nanobar.go(50);
+    }, 190); // Delay the progress update
+    setTimeout(function() {
+      nanobar.go(100);
+      // Hide the spinner with a smooth transition
+      spinner.style.opacity = '0';
+    }, 400); // Another delay
+  }
+  simulateLoading();
+</script>
+<style>
+  .loadingbar .bar {
+    background: #0a9875;
+    -webkit-box-shadow: 0px 4px 38px -15px #0a9875;
+    -moz-box-shadow: 0px 4px 38px -15px #0a9875;
+    box-shadow: 0px 4px 38px -15px #0a9875;
+    height: 1.85px;
+  }
+</style>
+<style>
+  #skeleton-loader {
+    display: none;
+  }
+
+  #skeleton-loader.active {
+    display: block;
+  }
+</style>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Get references to the skeleton loader and content elements
+    const skeletonLoader = document.getElementById("skeleton-loader");
+    const content = document.getElementById("content");
+
+    // Function to show the skeleton loader and hide the content
+    function showSkeletonLoader() {
+      skeletonLoader.classList.add("active");
+      content.style.display = "none";
+    }
+
+    // Function to hide the skeleton loader and show the content
+    function hideSkeletonLoader() {
+      skeletonLoader.classList.remove("active");
+      content.style.display = "block";
+    }
+
+    // Show the skeleton loader immediately (initial state)
+    showSkeletonLoader();
+    setTimeout(hideSkeletonLoader, 250);
+  });
+</script>
+<script src="./preline/dist/preline.js"></script>

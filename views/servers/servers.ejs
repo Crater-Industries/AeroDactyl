@@ -1,0 +1,186 @@
+<%- include('../components/head') %>
+
+<body class="bg-[#10181e]" style="font-family: 'Space Grotesk', sans-serif;">
+  <%- include('../components/modal') %>
+  <%- include('../components/navigation') %>
+  <div class="md:pl-64 flex flex-col flex-1 min-h-screen"> 
+    <%- include('../components/header') %>
+    <main class="flex-1 pb-8">
+      <div class="py-4 md:py-6">
+        <% /* Skeleton loader, lasts about 0.3s to let the page content load */ %>
+        <%- include('../components/skeleton') %>
+        <div class="hidden max-w-screen-2xl mx-auto px-4 sm:px-6 md:px-8" id="content">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+            <div class="mb-4 md:mb-0">
+              <h2 class="text-xl md:text-2xl font-semibold text-white tracking-tight">Your Servers</h2>
+              <p class="text-sm text-zinc-400 mt-1">Manage and monitor all your servers on <%= settings.name %>.</p>
+            </div>
+            <button onclick="toggleModal()" type="button" class="inline-flex items-center rounded-full bg-[#0a9875] px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-[#0cae86] focus:outline-none focus:ring-2 focus:ring-[#0a9875] focus:ring-offset-2 focus:ring-offset-[#10181e] transition-all duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>                              
+              Create server
+            </button>
+          </div>
+
+          <% if (req.query.err && req.query.err == "CREATED") { %>
+          <div class="rounded-xl bg-[#162027]/50 shadow border-t border-white/5 p-4 md:p-5 mb-6 flex items-start">
+            <div class="flex-shrink-0 mt-0.5">
+              <div class="bg-[#0a9875]/10 p-2 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-[#0a9875]">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-md font-medium tracking-tight text-white">Server queued for deployment</h3>
+              <div class="mt-1 text-sm text-zinc-400">
+                <p>Please allow a few minutes for installation. You can manage your server via the Panel once it's ready.</p>
+              </div>
+            </div>
+          </div>
+          <% } %>
+          
+          <% if (req.query.err && req.query.err == "MODIFIED") { %>
+          <div class="rounded-xl bg-[#162027]/50 shadow border-t border-white/5 p-4 md:p-5 mb-6 flex items-start">
+            <div class="flex-shrink-0 mt-0.5">
+              <div class="bg-[#0a9875]/10 p-2 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-[#0a9875]">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+              </div>
+            </div>
+            <div class="ml-4">
+              <h3 class="text-md font-medium tracking-tight text-white">Server queued for modification</h3>
+              <div class="mt-1 text-sm text-zinc-400">
+                <p>Please allow up to 60 seconds for server edits to be completed.</p>
+              </div>
+            </div>
+          </div>
+          <% } %>
+
+          <% if (pterodactyl.relationships.servers.data.length == 0) { %>
+            <div class="bg-[#162027]/30 rounded-xl border border-dashed border-white/10 p-8 text-center">
+              <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#0a9875]/10">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-[#0a9875]">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 17.25v-.228a4.5 4.5 0 0 0-.12-1.03l-2.268-9.64a3.375 3.375 0 0 0-3.285-2.602H7.923a3.375 3.375 0 0 0-3.285 2.602l-2.268 9.64a4.5 4.5 0 0 0-.12 1.03v.228m19.5 0a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3m19.5 0a3 3 0 0 0-3-3H5.25a3 3 0 0 0-3 3m16.5 0h.008v.008h-.008v-.008Zm-3 0h.008v.008h-.008v-.008Z" />
+                </svg>
+              </div>
+              <h3 class="mt-4 text-lg font-medium text-white">No servers yet</h3>
+              <p class="mt-2 text-sm text-zinc-400">Get started by creating your first server.</p>
+              <div class="mt-6">
+                <button onclick="toggleModal()" type="button" class="inline-flex items-center rounded-lg bg-[#0a9875] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#0cae86] focus:outline-none focus:ring-2 focus:ring-[#0a9875]">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                  Create your first server
+                </button>
+              </div>
+            </div>
+          <% } else { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <% for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) { %>
+                <div class="bg-gradient-to-br from-[#162027]/80 to-[#162027]/40 rounded-xl overflow-hidden border-t border-white/5 shadow-md hover:shadow-lg transition-all duration-200 group flex flex-col">
+                  <div class="p-6 pb-4">
+                    <div class="flex items-start justify-between mb-4">
+                      <div class="bg-white/5 rounded-lg p-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 0 1-3-3m3 3a3 3 0 1 0 0 6h13.5a3 3 0 1 0 0-6m-16.5-3a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3m-19.5 0a4.5 4.5 0 0 1 .9-2.7L5.737 5.1a3.375 3.375 0 0 1 2.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 0 1 .9 2.7m0 0a3 3 0 0 1-3 3m0 3h.008v.008h-.008v-.008Zm0-6h.008v.008h-.008v-.008Zm-3 6h.008v.008h-.008v-.008Zm0-6h.008v.008h-.008v-.008Z" />
+                        </svg>
+                      </div>
+                      <div class="grid grid-cols-3 gap-2">
+                        <span class="inline-flex items-center justify-center rounded-full bg-[#0a9875]/10 px-2.5 py-1 text-xs font-medium text-[#0a9875]">
+                          <%= pterodactyl.relationships.servers.data[i].attributes.limits.cpu/100 %> CPU
+                        </span>
+                        <span class="inline-flex items-center justify-center rounded-full bg-[#0a9875]/10 px-2.5 py-1 text-xs font-medium text-[#0a9875]">
+                          <%= pterodactyl.relationships.servers.data[i].attributes.limits.memory/1024 %> GB RAM
+                        </span>
+                        <span class="inline-flex items-center justify-center rounded-full bg-[#0a9875]/10 px-2.5 py-1 text-xs font-medium text-[#0a9875]">
+                          <%= pterodactyl.relationships.servers.data[i].attributes.limits.disk/1024 %> GB Disk
+                        </span>
+                      </div>
+                    </div>
+                    <h3 class="text-xl font-medium text-white line-clamp-1"><%= pterodactyl.relationships.servers.data[i].attributes.name %></h3>
+                    <p class="text-sm font-mono text-zinc-400 mt-2"><%= pterodactyl.relationships.servers.data[i].attributes.identifier %></p>
+                  </div>
+                  
+                  <div class="mt-auto p-4 bg-[#10181e]/30 border-t border-white/5">
+                    <div class="flex space-x-3">
+                      <a href="../edit?id=<%= pterodactyl.relationships.servers.data[i].attributes.id %>" class="flex-1 inline-flex justify-center items-center rounded-lg bg-[#0a9875] px-3 py-2 text-sm font-medium text-white hover:bg-[#0cae86] transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-1.5">
+                          <path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z" />
+                          <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z" />
+                        </svg>
+                        Edit
+                      </a>
+                      <a href="../delete?id=<%= pterodactyl.relationships.servers.data[i].attributes.id %>" class="flex-1 inline-flex justify-center items-center rounded-lg bg-white/5 px-3 py-2 text-sm font-medium text-white hover:bg-white/10 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-1.5">
+                          <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5z" clip-rule="evenodd" />
+                        </svg>
+                        Delete
+                      </a>
+                      <a href="<%= settings.pterodactyl.domain %>/server/<%= pterodactyl.relationships.servers.data[i].attributes.identifier %>" class="flex-1 inline-flex justify-center items-center rounded-lg bg-white/5 px-3 py-2 text-sm font-medium text-white hover:bg-white/10 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-1.5">
+                          <path fill-rule="evenodd" d="M4.25 5.5a.75.75 0 0 0-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 0 0 .75-.75v-4a.75.75 0 0 1 1.5 0v4A2.25 2.25 0 0 1 12.75 17h-8.5A2.25 2.25 0 0 1 2 14.75v-8.5A2.25 2.25 0 0 1 4.25 4h5a.75.75 0 0 1 0 1.5h-5Z" clip-rule="evenodd" />
+                          <path fill-rule="evenodd" d="M6.194 12.753a.75.75 0 0 0 1.06.053L16.5 4.44v2.81a.75.75 0 0 0 1.5 0v-4.5a.75.75 0 0 0-.75-.75h-4.5a.75.75 0 0 0 0 1.5h2.553l-9.056 8.194a.75.75 0 0 0-.053 1.06Z" clip-rule="evenodd" />
+                        </svg>
+                        Panel
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              <% } %>
+              
+              <div class="bg-[#162027]/20 rounded-xl border border-dashed border-white/10 flex flex-col items-center justify-center p-8 hover:bg-[#162027]/30 transition-colors cursor-pointer" onclick="toggleModal()">
+                <div class="bg-[#0a9875]/10 rounded-full p-4 mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-[#0a9875]">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                </div>
+                <p class="text-base font-medium text-white">Create new server</p>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </main>
+    <%- include('../components/footer') %>
+  </div>
+  
+  <%- include('../components/notifications') %>
+</body>
+<script>
+  function toggleModal() {
+    window.dispatchEvent(new CustomEvent('toggle-modal'));
+  }
+
+  function selectLocation(name) {
+    const previous = document.querySelector('.location-card.card-selected');
+    if (previous) {
+      previous.classList.remove('card-selected');
+    }
+    const selected = document.querySelector(`.location-card[data-name="${name}"]`);
+    selected.classList.add('card-selected');
+    document.getElementById('InputLoc').value = name;
+  }
+
+  function selectEgg(name) {
+    const previous = document.querySelector('.egg-card.card-selected');
+    if (previous) {
+      previous.classList.remove('card-selected');
+    }
+    const selected = document.querySelector(`.egg-card[data-name="${name}"]`);
+    selected.classList.add('card-selected');
+    document.getElementById('InputEgg').value = name;
+  }
+
+  async function submitNew() {
+    let name = encodeURIComponent(document.getElementById("InputName").value);
+    let egg = encodeURIComponent(document.getElementById("InputEgg").value);
+    let ram = encodeURIComponent(document.getElementById("InputRAM").value * 1024);
+    let disk = encodeURIComponent(document.getElementById("InputDisk").value * 1024);
+    let cpu = encodeURIComponent(document.getElementById("InputCPU").value * 100);
+    let location = encodeURIComponent(document.getElementById("InputLoc").value);
+    document.location.href = `/create?name=${name}&egg=${egg}&ram=${ram}&disk=${disk}&cpu=${cpu}&location=${location}`;
+  };
+</script>

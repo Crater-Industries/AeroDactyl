@@ -1,0 +1,281 @@
+<%- include('../components/head') %>
+
+<body class="bg-[#10181e]" style="font-family: 'Space Grotesk', sans-serif;">
+  <div>
+    <%- include('../components/adminnav') %>
+    <div class="md:pl-64 flex flex-col flex-1 min-h-screen"> 
+      <%- include('../components/header') %>
+      <main class="flex-1 pb-8">
+        <div class="py-4 md:py-6">
+          <% /* Skeleton loader, lasts about 0.3s to let the page content load */ %>
+          <%- include('../components/skeleton') %>
+          <div class="hidden max-w-screen-2xl mx-auto px-4 sm:px-6 md:px-8" id="content">
+            
+            <!-- Development Alert -->
+            <div class="rounded-xl md:rounded-2xl border border-yellow-500/20 p-4 mb-6 bg-yellow-500/10">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-yellow-300">Development Feature</h3>
+                  <div class="mt-2 text-sm text-white/80">
+                    <p>The server management feature is currently in development stage. Some functionality may be limited or not working as expected. We're actively improving this feature.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Header Section -->
+            <div class="bg-gradient-to-r from-[#162027]/80 to-[#162027]/30 rounded-xl md:rounded-2xl p-4 md:p-6 mb-6 border-t border-white/5 shadow-lg">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="mb-3 md:mb-0">
+                  <h2 class="text-lg md:text-xl font-semibold text-white tracking-tight">Server Management</h2>
+                  <p class="text-xs md:text-sm font-normal text-zinc-400 mt-1">Manage servers and their status</p>
+                </div>
+                <div class="flex space-x-3">
+                  <a href="/admin" class="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+                    </svg>
+                    Back to Admin
+                  </a>
+                </div>
+              </div>
+            </div>
+            
+            <% if (req.query.err) { %>
+            <div class="rounded-xl md:rounded-2xl border border-white/5 p-4 mb-6 bg-red-500/10">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <p class="text-sm text-white">Error code: <code class="bg-white/10 px-1.5 py-0.5 rounded-md"><%= req.query.err %></code></p>
+                </div>
+              </div>
+            </div>
+            <% } %>
+            
+            <% if (req.query.success) { %>
+            <div class="rounded-xl md:rounded-2xl border border-white/5 p-4 mb-6 bg-green-500/10">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <p class="text-sm text-white"><%= req.query.success %></p>
+                </div>
+              </div>
+            </div>
+            <% } %>
+            
+            <% if (pterodactyl.root_admin == true) { %>
+            <!-- Server Management Tools -->
+            <div class="grid grid-cols-1 gap-6 mb-6">
+              <!-- Quick Actions Card -->
+              <div class="bg-[#162027]/50 rounded-xl p-5 border-t border-white/5 shadow-lg">
+                <h3 class="text-md font-medium text-white mb-4">Quick Actions</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <a href="#" class="flex items-center px-4 py-3 text-sm text-white bg-white/5 rounded-md hover:bg-white/10 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-3 text-green-400">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    Create New Server
+                  </a>
+                  <a href="#" class="flex items-center px-4 py-3 text-sm text-white bg-white/5 rounded-md hover:bg-white/10 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-3 text-green-400">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>
+                    Export Server Data
+                  </a>
+                </div>
+              </div>
+              
+              <!-- Search Card -->
+              <div class="bg-[#162027]/50 rounded-xl p-5 border-t border-white/5 shadow-lg">
+                <h3 class="text-md font-medium text-white mb-4">Search Servers</h3>
+                
+                <form action="/admin/server" method="get">
+                  <div class="mb-4">
+                    <label for="search" class="block text-xs font-medium text-zinc-400 mb-2">Server Name or ID</label>
+                    <div class="relative rounded-md shadow-sm">
+                      <input type="text" name="search" id="search" class="block w-full rounded-md border-0 bg-white/5 py-2.5 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm sm:leading-6" placeholder="Search..." value="<%= req.query.search || '' %>">
+                    </div>
+                  </div>
+                  
+                  <div class="flex justify-end">
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                      Search
+                    </button>
+                  </div>
+                </form>
+              </div>
+              
+              <!-- Server List Card -->
+              <div class="bg-[#162027]/50 rounded-xl border-t border-white/5 shadow-lg overflow-hidden">
+                <div class="p-5 border-b border-white/5 flex justify-between items-center">
+                  <h3 class="text-md font-medium text-white">Server List</h3>
+                  <span class="text-xs text-zinc-400">Showing <%= servers.length %> of <%= totalServers %> servers</span>
+                </div>
+                
+                <div class="overflow-x-auto">
+                  <table class="min-w-full divide-y divide-white/5">
+                    <thead class="bg-white/5">
+                      <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Server</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Owner</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Node</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-[#162027]/30 divide-y divide-white/5">
+                      <% if (servers && servers.length > 0) { %>
+                        <% servers.forEach(server => { %>
+                          <tr>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                              <div class="flex items-center">
+                                <div class="ml-4">
+                                  <div class="text-sm font-medium text-white"><%= server.attributes.name %></div>
+                                  <div class="text-xs text-zinc-400"><%= server.attributes.identifier %></div>
+                                </div>
+                              </div>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                              <div class="text-sm text-white">
+                                <% if (server.attributes.user) { %>
+                                  <%= server.attributes.user %>
+                                  <div class="text-xs text-zinc-400">ID: <%= server.attributes.user_id %></div>
+                                <% } else { %>
+                                  <span class="text-zinc-400">User ID: <%= server.attributes.user_id %></span>
+                                <% } %>
+                              </div>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                              <div class="text-sm text-white">
+                                <% if (server.attributes.node_name) { %>
+                                  <%= server.attributes.node_name %>
+                                  <div class="text-xs text-zinc-400">ID: <%= server.attributes.node %></div>
+                                <% } else { %>
+                                  <span class="text-zinc-400">Node ID: <%= server.attributes.node %></span>
+                                <% } %>
+                              </div>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap">
+                              <% if (server.attributes.suspended) { %>
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                  Suspended
+                                </span>
+                              <% } else { %>
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                  Active
+                                </span>
+                              <% } %>
+                            </td>
+                            <td class="px-6 py-5 whitespace-nowrap text-right text-sm font-medium">
+                              <div class="flex justify-end space-x-2">
+                                <a href="/admin/server/<%= server.attributes.id %>/edit" class="text-indigo-400 hover:text-indigo-300" title="Edit Server">
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                  </svg>
+                                </a>
+                                <% if (server.attributes.suspended) { %>
+                                  <a href="/admin/server/<%= server.attributes.id %>/unsuspend" class="text-green-400 hover:text-green-300" title="Unsuspend Server">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+                                  </a>
+                                <% } else { %>
+                                  <a href="/admin/server/<%= server.attributes.id %>/suspend" class="text-yellow-400 hover:text-yellow-300" title="Suspend Server">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                                    </svg>
+                                  </a>
+                                <% } %>
+                                <a href="/admin/server/<%= server.attributes.id %>/delete" class="text-red-400 hover:text-red-300" title="Delete Server" onclick="return confirm('Are you sure you want to delete this server? This action cannot be undone.')">
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12.04.27C4.358 5.77 5.01 5.801 5.63 5.84m1.46.13a48.11 48.11 0 0 1 3.39.35m-1.4-.05c1.713.197 3.48.255 5.24.255s3.527-.058 5.24-.255a48.11 48.11 0 0 0 1.4.05m-1.46-.13a48.108 48.108 0 0 0-3.39-.35m-3.28-.37a48.118 48.118 0 0 0-3.48.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                  </svg>
+                                </a>
+                              </div>
+                            </td>
+                          </tr>
+                        <% }); %>
+                      <% } else { %>
+                        <tr>
+                          <td colspan="5" class="px-6 py-10 text-center text-sm text-zinc-400">
+                            <div class="flex flex-col items-center justify-center">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-zinc-500 mb-3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 0 1-3-3m3 3a3 3 0 1 0 0 6h13.5a3 3 0 1 0 0-6m-16.5-3a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3m-19.5 0a4.5 4.5 0 0 1 .9-2.7L5.737 5.1a3.375 3.375 0 0 1 2.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 0 1 .9 2.7m0 0a3 3 0 0 1-3 3m0 3h.008v.008h-.008v-.008Zm0-6h.008v.008h-.008v-.008Zm-3 6h.008v.008h-.008v-.008Zm0-6h.008v.008h-.008v-.008Z" />
+                              </svg>
+                              <p>No servers found matching your criteria</p>
+                              <a href="/admin/server" class="mt-3 text-green-400 hover:text-green-300">Clear filters</a>
+                            </div>
+                          </td>
+                        </tr>
+                      <% } %>
+                    </tbody>
+                  </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="px-6 py-4 flex items-center justify-between border-t border-white/5">
+                  <div class="flex-1 flex justify-between sm:hidden">
+                    <a href="<%= currentPage > 1 ? `/admin/server?page=${currentPage - 1}${searchParams}` : '#' %>" class="<%= currentPage > 1 ? 'text-white hover:bg-white/10' : 'text-zinc-500 cursor-not-allowed' %> relative inline-flex items-center px-4 py-2 border border-white/10 text-sm font-medium rounded-md bg-white/5">
+                      Previous
+                    </a>
+                    <a href="<%= currentPage < totalPages ? `/admin/server?page=${currentPage + 1}${searchParams}` : '#' %>" class="<%= currentPage < totalPages ? 'text-white hover:bg-white/10' : 'text-zinc-500 cursor-not-allowed' %> ml-3 relative inline-flex items-center px-4 py-2 border border-white/10 text-sm font-medium rounded-md bg-white/5">
+                      Next
+                    </a>
+                  </div>
+                  <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                      <p class="text-sm text-zinc-400">
+                        Showing <span class="font-medium text-white"><%= (currentPage - 1) * perPage + 1 %></span> to <span class="font-medium text-white"><%= Math.min(currentPage * perPage, totalServers) %></span> of <span class="font-medium text-white"><%= totalServers %></span> servers
+                      </p>
+                    </div>
+                    <div>
+                      <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                        <a href="<%= currentPage > 1 ? `/admin/server?page=${currentPage - 1}${searchParams}` : '#' %>" class="<%= currentPage > 1 ? 'text-white hover:bg-white/10' : 'text-zinc-500 cursor-not-allowed' %> relative inline-flex items-center px-2 py-2 rounded-l-md border border-white/10 bg-white/5 text-sm font-medium">
+                          <span class="sr-only">Previous</span>
+                          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                          </svg>
+                        </a>
+                        
+                        <% for(let i = 1; i <= totalPages; i++) { %>
+                          <a href="/admin/server?page=<%= i %><%= searchParams %>" class="<%= currentPage === i ? 'bg-white/10 text-white' : 'bg-white/5 text-zinc-400 hover:bg-white/10' %> relative inline-flex items-center px-4 py-2 border border-white/10 text-sm font-medium">
+                            <%= i %>
+                          </a>
+                        <% } %>
+                        
+                        <a href="<%= currentPage < totalPages ? `/admin/server?page=${currentPage + 1}${searchParams}` : '#' %>" class="<%= currentPage < totalPages ? 'text-white hover:bg-white/10' : 'text-zinc-500 cursor-not-allowed' %> relative inline-flex items-center px-2 py-2 rounded-r-md border border-white/10 bg-white/5 text-sm font-medium">
+                          <span class="sr-only">Next</span>
+                          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                          </svg>
+                        </a>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <% } %>
+          </div>
+        </div>
+      </main>
+      <%- include('../components/footer') %>
+      <%- include('../components/notifications') %>
+    </div>
+  </div>
+</body>
+</rewritten_file>

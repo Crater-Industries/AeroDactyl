@@ -1,0 +1,179 @@
+<%- include('../components/head') %>
+
+<body class="bg-[#10181e]" style="font-family: 'Space Grotesk', sans-serif;">
+  <div>
+    <%- include('../components/navigation') %>
+    <div class="md:pl-64 flex flex-col flex-1 min-h-screen"> 
+      <%- include('../components/header') %>
+      <main class="flex-1 pb-6 md:pb-8">
+        <div class="py-2 md:py-4">
+          <%- include('../components/skeleton') %>
+          <div class="hidden max-w-screen-2xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8" id="content">
+            
+         
+            <div class="bg-gradient-to-r from-[#162027]/80 to-[#162027]/30 rounded-xl md:rounded-2xl p-4 md:p-6 mb-4 md:mb-6 border-t border-white/5 shadow-lg">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="flex items-center mb-4 md:mb-0">
+             
+                  <div class="relative mr-4">
+                    <img class="h-14 w-14 md:h-16 md:w-16 rounded-xl ring-2 ring-[#0a9875]/20" 
+                         src="https://cdn.discordapp.com/avatars/<%= userinfo.id %>/<%= userinfo.avatar %>?size=256" 
+                         alt="<%= userinfo.global_name %>'s avatar">
+                  </div>
+                  
+               
+                  <div>
+                    <h2 class="text-lg md:text-xl font-semibold text-white tracking-tight"><%= userinfo.global_name %> 
+                      <span class="text-zinc-500 text-sm md:text-base">(<%= userinfo.username %>)</span>
+                    </h2>
+                    <p class="text-xs md:text-sm font-normal text-zinc-400 mt-1">Member since <%= new Date(userinfo.created_at || Date.now()).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) %></p>
+                  </div>
+                </div>
+                <a href="../updateinfo" class="inline-flex items-center justify-center rounded-full bg-[#0a9875] px-4 md:px-5 py-1.5 md:py-2 text-xs md:text-sm font-medium text-white shadow-sm hover:bg-[#0cae86] focus:outline-none focus:ring-2 focus:ring-[#0a9875] focus:ring-offset-2 focus:ring-offset-[#162027] transition-all duration-200">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 md:size-5 mr-1.5 md:mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                  </svg>                                             
+                  Refresh Profile
+                </a>
+              </div>
+            </div>
+            
+           
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 mb-4 md:mb-6">
+     
+              <div class="bg-gradient-to-br from-[#162027]/80 to-[#162027]/40 rounded-xl md:rounded-2xl p-4 md:p-6 border-t border-white/5 shadow-md hover:shadow-lg transition-all duration-200 group">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 bg-[#0a9875]/10 p-2 md:p-3 rounded-xl group-hover:bg-[#0a9875]/20 transition-all duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 md:w-6 md:h-6 text-[#0a9875]">
+                      <path fill-rule="evenodd" d="M1 6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3V6Zm4 1.5a2 2 0 1 1 4 0 2 2 0 0 1-4 0Zm2 3a4 4 0 0 0-3.665 2.395.75.75 0 0 0 .416 1A8.98 8.98 0 0 0 7 14.5a8.98 8.98 0 0 0 3.249-.604.75.75 0 0 0 .416-1.001A4.001 4.001 0 0 0 7 10.5Zm5-3.75a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Zm0 6.5a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Zm.75-4a.75.75 0 0 0 0 1.5h2.5a.75.75 0 0 0 0-1.5h-2.5Z" clip-rule="evenodd" />
+                    </svg>                    
+                  </div>
+                  <div class="ml-3">
+                    <p class="text-sm font-medium text-white/90">User ID</p>
+                    <p class="text-xs text-zinc-400 mt-1 break-all"><%= req.session.userinfo.id %></p>
+                  </div>
+                </div>
+              </div>
+              
+            
+              <div class="bg-gradient-to-br from-[#162027]/80 to-[#162027]/40 rounded-xl md:rounded-2xl p-4 md:p-6 border-t border-white/5 shadow-md hover:shadow-lg transition-all duration-200 group">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 bg-[#0a9875]/10 p-2 md:p-3 rounded-xl group-hover:bg-[#0a9875]/20 transition-all duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 md:w-6 md:h-6 text-[#0a9875]">
+                      <path fill-rule="evenodd" d="M5.404 14.596A6.5 6.5 0 1 1 16.5 10a1.25 1.25 0 0 1-2.5 0 4 4 0 1 0-.571 2.06A2.75 2.75 0 0 0 18 10a8 8 0 1 0-2.343 5.657.75.75 0 0 0-1.06-1.06 6.5 6.5 0 0 1-9.193 0ZM10 7.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z" clip-rule="evenodd" />
+                    </svg>                        
+                  </div>
+                  <div class="ml-3">
+                    <p class="text-sm font-medium text-white/90">Email</p>
+                    <p class="text-xs text-zinc-400 mt-1 break-all"><%= req.session.userinfo.email %></p>
+                  </div>
+                </div>
+              </div>
+              
+      
+              <div class="bg-gradient-to-br from-[#162027]/80 to-[#162027]/40 rounded-xl md:rounded-2xl p-4 md:p-6 border-t border-white/5 shadow-md hover:shadow-lg transition-all duration-200 group">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 bg-[#0a9875]/10 p-2 md:p-3 rounded-xl group-hover:bg-[#0a9875]/20 transition-all duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 md:w-6 md:h-6 text-[#0a9875]">
+                      <path d="M7.75 2.75a.75.75 0 0 0-1.5 0v1.258a32.987 32.987 0 0 0-3.599.278.75.75 0 1 0 .198 1.487A31.545 31.545 0 0 1 8.7 5.545 19.381 19.381 0 0 1 7 9.56a19.418 19.418 0 0 1-1.002-2.05.75.75 0 0 0-1.384.577 20.935 20.935 0 0 0 1.492 2.91 19.613 19.613 0 0 1-3.828 4.154.75.75 0 1 0 .945 1.164A21.116 21.116 0 0 0 7 12.331c.095.132.192.262.29.391a.75.75 0 0 0 1.194-.91c-.204-.266-.4-.538-.59-.815a20.888 20.888 0 0 0 2.333-5.332c.31.031.618.068.924.108a.75.75 0 0 0 .198-1.487 32.832 32.832 0 0 0-3.599-.278V2.75Z" />
+                      <path fill-rule="evenodd" d="M13 8a.75.75 0 0 1 .671.415l4.25 8.5a.75.75 0 1 1-1.342.67L15.787 16h-5.573l-.793 1.585a.75.75 0 1 1-1.342-.67l4.25-8.5A.75.75 0 0 1 13 8Zm2.037 6.5L13 10.427 10.964 14.5h4.073Z" clip-rule="evenodd" />
+                    </svg>                      
+                  </div>
+                  <div class="ml-3">
+                    <p class="text-sm font-medium text-white/90">Language</p>
+                    <p class="text-xs text-zinc-400 mt-1"><%= req.session.userinfo.locale %></p>
+                  </div>
+                </div>
+              </div>
+              
+              
+              <div class="bg-gradient-to-br from-[#162027]/80 to-[#162027]/40 rounded-xl md:rounded-2xl p-4 md:p-6 border-t border-white/5 shadow-md hover:shadow-lg transition-all duration-200 group">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 bg-[#0a9875]/10 p-2 md:p-3 rounded-xl group-hover:bg-[#0a9875]/20 transition-all duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 md:w-6 md:h-6 text-[#0a9875]">
+                      <path d="M4.464 3.162A2 2 0 0 1 6.28 2h7.44a2 2 0 0 1 1.816 1.162l1.154 2.5c.067.145.115.291.145.438A3.508 3.508 0 0 0 16 6H4c-.288 0-.568.035-.835.1.03-.147.078-.293.145-.438l1.154-2.5Z" />
+                      <path fill-rule="evenodd" d="M2 9.5a2 2 0 0 1 2-2h12a2 2 0 1 1 0 4H4a2 2 0 0 1-2-2Zm13.24 0a.75.75 0 0 1 .75-.75H16a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75h-.01a.75.75 0 0 1-.75-.75V9.5Zm-2.25-.75a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75H13a.75.75 0 0 0 .75-.75V9.5a.75.75 0 0 0-.75-.75h-.01ZM2 15a2 2 0 0 1 2-2h12a2 2 0 1 1 0 4H4a2 2 0 0 1-2-2Zm13.24 0a.75.75 0 0 1 .75-.75H16a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75h-.01a.75.75 0 0 1-.75-.75V15Zm-2.25-.75a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75H13a.75.75 0 0 0 .75-.75V15a.75.75 0 0 0-.75-.75h-.01Z" clip-rule="evenodd" />
+                    </svg>                                         
+                  </div>
+                  <div class="ml-3">
+                    <p class="text-sm font-medium text-white/90">Servers</p>
+                    <%
+                    let servers = pterodactyl.relationships.servers.data.length;
+                    %>
+                    <p class="text-xs text-zinc-400 mt-1"><%= servers %> server<%= servers !== 1 ? 's' : '' %></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+         
+            <div class="bg-gradient-to-br from-[#162027]/80 to-[#162027]/40 rounded-xl md:rounded-2xl p-4 md:p-6 border-t border-white/5 shadow-md">
+              <div class="flex items-center mb-3 md:mb-4">
+                <div class="flex-shrink-0 bg-[#0a9875]/10 p-2 md:p-3 rounded-xl">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 md:w-6 md:h-6 text-[#0a9875]">
+                    <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm-9 8c0 1 1 1 1 1h5.256A4.493 4.493 0 0 1 8 12.5a4.49 4.49 0 0 1 1.544-3.393C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4Z" />
+                    <path d="M16 12.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Zm-1.993-1.679a.75.75 0 0 0-1.014-.111l-1.243.89-1.243-.89a.75.75 0 1 0-.883 1.212l1.673 1.195a.75.75 0 0 0 .883 0l1.673-1.195a.75.75 0 0 0 .154-1.101Z" />
+                  </svg>
+                </div>
+                <h3 class="ml-3 text-base md:text-lg font-medium text-white">Claim Referral Code</h3>
+              </div>
+              <p class="text-xs md:text-sm text-zinc-400 mb-3 md:mb-4">Enter the referral code you've been provided below to receive bonus resources.</p>
+              
+              <div class="flex flex-col sm:flex-row gap-3">
+                <input type="text" id="refCode" 
+                  class="w-full sm:flex-1 border border-white/5 bg-[#10181e]/50 focus:ring-[#0a9875] focus:border-[#0a9875] transition font-medium px-3 py-2 text-sm text-zinc-300 placeholder:text-zinc-500 rounded-lg"
+                  placeholder="Referral code">
+                
+                <button id="claimReferralButton"
+                  class="w-full sm:w-auto inline-flex items-center justify-center bg-[#0a9875] hover:bg-[#0cae86] text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-1.5">
+                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />
+                  </svg>
+                  Claim
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <%- include('../components/footer') %>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const claimReferralButton = document.getElementById('claimReferralButton');
+  
+      claimReferralButton.addEventListener('click', async function() {
+        const codeInput = document.getElementById('refCode');
+        const code = codeInput.value.trim();
+  
+        if (!code) {
+          alert('Please enter a referral code.');
+          return;
+        }
+  
+        try {
+          const response = await fetch('/referral/claim', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ code: code })
+          });
+          const data = await response.json();
+  
+          if (data.success) {
+            alert('Referral code successfully claimed!');
+          } else {
+            alert('Failed to claim referral code: ' + (data.error || 'Unknown error'));
+          }
+        } catch (error) {
+          console.error('Error claiming referral code:', error);
+          alert('There was a problem processing your request. Please try again.');
+        }
+      });
+    });
+  </script>
+</body>

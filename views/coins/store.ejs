@@ -1,0 +1,149 @@
+<%- include('../components/head') %>
+
+<body class="bg-[#10181e]" style="font-family: 'Space Grotesk', sans-serif;">
+  <div>
+    <%- include('../components/navigation') %>
+    <div class="md:pl-64 flex flex-col flex-1 h-screen"> <%- include('../components/header') %>
+      <main class="flex-1 pb-32">
+        <div class="py-6">
+          <%- include('../components/skeleton') %>
+          <div class="hidden max-w-screen-2xl pt-16 mx-auto px-4 sm:px-6 md:px-16" id="content">
+            <div class="lg:flex lg:items-center lg:justify-between rounded-3xl mb-8">
+              <div class="min-w-0 flex-1">
+                <div class="flex">
+                  <div class="relative">
+                    <h2 class="text-xl font-semibold text-white sm:truncate tracking-tight">Resources Store</h2>
+                    <p class="text-sm font-normal text-zinc-400">Buy resources with your choice of <%= settings.website.coins %></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <h3 class="text-lg font-medium text-white mb-5">Resource Packages</h3>
+            <div id="packageList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 w-full mb-10">
+              
+            </div>
+            
+            <h3 class="text-lg font-medium text-white mb-4">Individual Resources</h3>
+            <div id="productList" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 w-full mb-8">
+            </div>
+          </div>
+        </div>
+      </main>
+      <script>
+          
+        const products = [
+          { type: 'ram', name: '1GB of memory', costZTT: <%= settings.api.client.coins.store.ram.cost %> },
+          { type: 'cpu', name: '1 CPU core', costZTT: <%= settings.api.client.coins.store.cpu.cost %> },
+          { type: 'disk', name: '2GB of storage', costZTT: <%= settings.api.client.coins.store.disk.cost %> },
+          { type: 'servers', name: '1 server slot', costZTT: <%= settings.api.client.coins.store.servers.cost %> },
+        ];
+        
+        
+        const packages = [
+          <% if (settings.api.client.coins.store.packages) { %>
+            <% Object.entries(settings.api.client.coins.store.packages).forEach(([id, pkg], index) => { %>
+              { 
+                id: '<%= id %>',
+                name: '<%= pkg.name %>', 
+                description: '<%= pkg.description %>',
+                resources: {
+                  ram: <%= pkg.ram %>,
+                  cpu: <%= pkg.cpu %>,
+                  disk: <%= pkg.disk %>,
+                  servers: <%= pkg.servers %>
+                },
+                costZTT: <%= pkg.cost %>,
+                highlight: <%= pkg.highlight || false %>
+              }<%= index < Object.keys(settings.api.client.coins.store.packages).length - 1 ? ',' : '' %>
+            <% }); %>
+          <% } %>
+        ];
+
+        function updateProductDisplay() {
+          const productList = document.getElementById('productList');
+          productList.innerHTML = '';
+
+          products.forEach(product => {
+            const cost = `${product.costZTT} <%= settings.website.coins %>` 
+            const productHTML = `
+              <div class="bg-[#162027] rounded-lg overflow-hidden border border-white/5 shadow-sm hover:shadow transition-all duration-300 flex flex-col h-full">
+                <div class="p-4">
+                  <h4 class="font-medium text-white text-sm mb-2">${product.name}</h4>
+                  <div class="mt-auto">
+                    <span class="inline-block rounded-full bg-[#0a9875]/10 px-3 py-1 text-xs font-medium text-[#0a9875]">
+                      ${cost}
+                    </span>
+                  </div>
+                </div>
+                <!-- Added divider and moved purchase button to bottom -->
+                <div class="mt-auto p-3 bg-[#10181e]/50 border-t border-white/10">
+                  <a href="/buy?type=${product.type}&amount=1" class="w-full inline-flex justify-center items-center rounded-lg bg-[#0a9875] px-2 py-1.5 text-xs font-medium text-white hover:bg-[#0cae86] transition-colors">
+                    Purchase
+                  </a>
+                </div>
+              </div>`;
+            productList.innerHTML += productHTML;
+          });
+        }
+        
+        function updatePackageDisplay() {
+          const packageList = document.getElementById('packageList');
+          packageList.innerHTML = '';
+
+          packages.forEach(pkg => {
+            const highlightClass = pkg.highlight ? 'border border-[#0a9875]/30' : 'border border-white/5';
+            const highlightShadow = pkg.highlight ? 'shadow-md shadow-[#0a9875]/5' : 'shadow-md';
+            
+            const packageHTML = `
+              <div class="bg-gradient-to-br from-[#162027]/80 to-[#162027]/40 rounded-xl overflow-hidden ${highlightClass} ${highlightShadow} hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
+                <div class="p-5">
+                  <div class="flex items-start justify-between mb-6">
+                    <div class="min-h-[60px] max-w-[65%]">
+                      <h3 class="text-lg font-medium text-white">${pkg.name}</h3>
+                      <p class="text-sm text-zinc-400 mt-1 line-clamp-2">${pkg.description}</p>
+                    </div>
+                    <span class="inline-flex items-center rounded-full bg-[#0a9875]/10 px-4 py-1.5 text-sm font-medium text-[#0a9875] min-w-[100px] justify-center whitespace-nowrap">
+                      ${pkg.costZTT} <%= settings.website.coins %>
+                    </span>
+                  </div>
+                  
+                  <!-- Resource Grid -->
+                  <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-[#10181e]/50 rounded-lg p-3">
+                      <div class="text-xs text-zinc-400">RAM</div>
+                      <div class="text-sm font-medium text-white mt-1">${pkg.resources.ram} GB</div>
+                    </div>
+                    <div class="bg-[#10181e]/50 rounded-lg p-3">
+                      <div class="text-xs text-zinc-400">CPU</div>
+                      <div class="text-sm font-medium text-white mt-1">${pkg.resources.cpu} Cores</div>
+                    </div>
+                    <div class="bg-[#10181e]/50 rounded-lg p-3">
+                      <div class="text-xs text-zinc-400">Storage</div>
+                      <div class="text-sm font-medium text-white mt-1">${pkg.resources.disk} GB</div>
+                    </div>
+                    <div class="bg-[#10181e]/50 rounded-lg p-3">
+                      <div class="text-xs text-zinc-400">Servers</div>
+                      <div class="text-sm font-medium text-white mt-1">${pkg.resources.servers} Slots</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Purchase Button -->
+                <div class="mt-auto p-3 bg-[#10181e]/50 border-t border-white/10">
+                  <a href="/buy-package?id=${pkg.id}" class="w-full inline-flex justify-center items-center rounded-lg bg-[#0a9875] px-3 py-2 text-sm font-medium text-white hover:bg-[#0cae86] transition-colors">
+                    Purchase Package
+                  </a>
+                </div>
+              </div>`;
+            packageList.innerHTML += packageHTML;
+          });
+        }
+        
+        updateProductDisplay();
+        updatePackageDisplay();
+      </script>
+      <%- include('../components/footer') %>
+    </div>
+  </div>
+</body>

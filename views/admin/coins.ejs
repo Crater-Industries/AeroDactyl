@@ -1,0 +1,121 @@
+<%- include('../components/head') %>
+
+<body class="bg-[#10181e]" style="font-family: 'Space Grotesk', sans-serif;">
+  <div>
+    <%- include('../components/adminnav') %>
+    <div class="md:pl-64 flex flex-col flex-1 min-h-screen"> 
+      <%- include('../components/header') %>
+      <main class="flex-1 pb-8">
+        <div class="py-4 md:py-6">
+          <% /* Skeleton loader, lasts about 0.3s to let the page content load */ %>
+          <%- include('../components/skeleton') %>
+          <div class="hidden max-w-screen-2xl mx-auto px-4 sm:px-6 md:px-8" id="content">
+
+            
+            <div class="bg-gradient-to-r from-[#162027]/80 to-[#162027]/30 rounded-xl md:rounded-2xl p-4 md:p-6 mb-4 md:mb-6 border-t border-white/5 shadow-lg">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="mb-3 md:mb-0">
+                  <h2 class="text-lg md:text-xl font-semibold text-white tracking-tight">Coin Management</h2>
+                  <p class="text-xs md:text-sm font-normal text-zinc-400 mt-1">Manage user coins and transactions on the <%= settings.name %> dashboard.</p>
+                </div>
+              </div>
+            </div>
+            
+            <% if (req.query.err) { %>
+            <div class="rounded-xl md:rounded-2xl border border-white/5 p-4 mb-5 bg-red-500/10">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <p class="text-sm text-white">Error code: <code class="bg-white/10 px-1.5 py-0.5 rounded-md"><%= req.query.err %></code></p>
+                </div>
+              </div>
+            </div>
+            <% } %>
+            
+            <% if (req.query.success) { %>
+            <div class="rounded-xl md:rounded-2xl border border-white/5 p-4 mb-5 bg-green-500/10">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <p class="text-sm text-white"><%= req.query.success %></p>
+                </div>
+              </div>
+            </div>
+            <% } %>
+            
+            <% if (pterodactyl.root_admin == true) { %>
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <div class="relative flex flex-col space-y-3 rounded-xl md:rounded-2xl bg-[#162027]/30 shadow border-t border-white/5 px-5 py-4 md:px-6 md:py-5 transition">
+                <h1 class="text-lg font-semibold text-white">Add Coins</h1>
+                <p class="text-sm text-zinc-400">Add coins to a user's account by Discord ID.</p>
+                
+                <div class="mt-2">
+                  <label for="id1" class="block text-sm font-medium text-zinc-400 mb-1">Discord ID</label>
+                  <input type="text" class="w-full border border-white/5 bg-[#162027]/30 focus:ring-[#0a9875] focus:border-transparent transition font-medium pl-4 py-3 text-sm text-zinc-400 placeholder:text-zinc-500 tracking-tight rounded-xl" id="id1" placeholder="Enter Discord ID">
+                </div>
+                
+                <div class="mt-2">
+                  <label for="amount1" class="block text-sm font-medium text-zinc-400 mb-1">Amount</label>
+                  <input type="text" class="w-full border border-white/5 bg-[#162027]/30 focus:ring-[#0a9875] focus:border-transparent transition font-medium pl-4 py-3 text-sm text-zinc-400 placeholder:text-zinc-500 tracking-tight rounded-xl" id="amount1" placeholder="Enter amount of coins">
+                </div>
+                
+                <a href="javascript:addCoins()" class="inline-flex items-center justify-center rounded-full border-none bg-[#0a9875] px-6 py-2.5 text-sm font-normal text-white ring-none focus:outline-none hover:bg-[#0b8d6e] transition-colors duration-200 mt-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                  </svg>
+                  Add Coins
+                </a>
+              </div>
+              
+              <div class="relative flex flex-col space-y-3 rounded-xl md:rounded-2xl bg-[#162027]/30 shadow border-t border-white/5 px-5 py-4 md:px-6 md:py-5 transition">
+                <h1 class="text-lg font-semibold text-white">Remove Coins</h1>
+                <p class="text-sm text-zinc-400">Remove coins from a user's account by Discord ID.</p>
+                
+                <div class="mt-2">
+                  <label for="id2" class="block text-sm font-medium text-zinc-400 mb-1">Discord ID</label>
+                  <input type="text" class="w-full border border-white/5 bg-[#162027]/30 focus:ring-[#0a9875] focus:border-transparent transition font-medium pl-4 py-3 text-sm text-zinc-400 placeholder:text-zinc-500 tracking-tight rounded-xl" id="id2" placeholder="Enter Discord ID">
+                </div>
+                
+                <div class="mt-2">
+                  <label for="amount2" class="block text-sm font-medium text-zinc-400 mb-1">Amount</label>
+                  <input type="text" class="w-full border border-white/5 bg-[#162027]/30 focus:ring-[#0a9875] focus:border-transparent transition font-medium pl-4 py-3 text-sm text-zinc-400 placeholder:text-zinc-500 tracking-tight rounded-xl" id="amount2" placeholder="Enter amount of coins">
+                </div>
+                
+                <a href="javascript:removeCoins()" class="inline-flex items-center justify-center rounded-full border-none bg-red-600 px-6 py-2.5 text-sm font-normal text-white ring-none focus:outline-none hover:bg-red-700 transition-colors duration-200 mt-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
+                  </svg>
+                  Remove Coins
+                </a>
+              </div>
+            </div>
+            <% } %>
+          </div>
+        </div>
+      </main>
+      <%- include('../components/footer') %>
+      <%- include('../components/notifications') %>
+    </div>
+  </div>
+  <script>
+    async function addCoins() {
+      let id1 = encodeURIComponent(document.getElementById("id1").value);
+      let amount1 = encodeURIComponent(document.getElementById("amount1").value);
+      document.location.href = `/addcoins?id=${id1}&coins=${amount1}`;
+    };
+    
+    async function removeCoins() {
+      let id2 = encodeURIComponent(document.getElementById("id2").value);
+      let amount2 = encodeURIComponent(document.getElementById("amount2").value);
+      document.location.href = `/removecoins?id=${id2}&coins=${amount2}`;
+    };
+  </script>
+</body>

@@ -1,0 +1,203 @@
+<%- include('../components/head') %>
+  
+<body class="bg-[#10181e]" style="font-family: 'Space Grotesk', sans-serif;">
+  <div>
+    <%- include('../components/navigation') %>
+    <div class="md:pl-64 flex flex-col flex-1 min-h-screen"> 
+      <%- include('../components/header') %>
+      <main class="flex-1 pb-6 md:pb-8">
+        <div class="py-2 md:py-4">
+          <% /* Skeleton loader, lasts about 0.3s to let the page content load */ %>
+          <%- include('../components/skeleton') %>
+          <div class="hidden max-w-screen-2xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8" id="content">
+            
+            <div class="mb-6 md:mb-8">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="mb-4 md:mb-0">
+                  <h2 class="text-xl md:text-2xl font-semibold text-white tracking-tight">Referrals</h2>
+                  <p class="text-sm font-normal text-zinc-400 mt-1">View and manage your referral codes</p>
+                </div>
+                <button id="createRef" type="button" class="inline-flex items-center rounded-full bg-[#0a9875] px-4 md:px-5 py-1.5 md:py-2 text-xs md:text-sm font-medium text-white shadow-sm hover:bg-[#0cae86] focus:outline-none focus:ring-2 focus:ring-[#0a9875] focus:ring-offset-2 focus:ring-offset-[#10181e] transition-all duration-200">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 md:size-5 mr-1.5 md:mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>                          
+                  Create Referral
+                </button>
+              </div>
+            </div>
+            
+            <% if (req.query.err) { %>
+            <div class="bg-red-500/10 border-l-4 border-red-500 rounded-r-lg p-4 mb-6">
+              <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-red-500 mr-3">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z" clip-rule="evenodd" />
+                </svg>
+                <p class="text-sm text-white">Error code: <code class="bg-red-500/20 px-1.5 py-0.5 rounded text-red-300"><%= req.query.err %></code></p>
+              </div>
+            </div>
+            <% } %>
+            
+            <div class="mb-8">
+              <div class="flex items-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-[#0a9875] mr-2">
+                  <path d="M10 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM1.49 15.326a.78.78 0 0 1-.358-.442 3 3 0 0 1 4.308-3.516 6.484 6.484 0 0 0-1.905 3.959c-.023.222-.014.442.025.654a4.97 4.97 0 0 1-2.07-.655ZM16.44 15.98a4.97 4.97 0 0 0 2.07-.654.78.78 0 0 0 .357-.442 3 3 0 0 0-4.308-3.517 6.484 6.484 0 0 1 1.907 3.96 2.32 2.32 0 0 1-.026.654ZM18 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM5.304 16.19a.844.844 0 0 1-.277-.71 5 5 0 0 1 9.947 0 .843.843 0 0 1-.277.71A6.975 6.975 0 0 1 10 18a6.974 6.974 0 0 1-4.696-1.81Z" />
+                </svg>
+                <h3 class="text-lg font-medium text-white">Your Referrals</h3>
+              </div>
+              <p id="total-uses" class="text-sm text-zinc-400 mb-4">You have no referral codes!</p>
+              
+              <div id="referral-codes-container" class="space-y-4"></div>
+            </div>
+            
+            <div class="mb-6">
+              <div class="flex items-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-[#0a9875] mr-2">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" />
+                </svg>
+                <h3 class="text-lg font-medium text-white">How Referrals Work</h3>
+              </div>
+              
+              <div class="flex flex-col gap-6 mt-4 pl-2">
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 w-8 h-8 rounded-full bg-[#0a9875]/70 text-white font-bold text-lg flex items-center justify-center mr-4">1</div>
+                  <div>
+                    <p class="text-white text-sm font-medium">Copy your referral link 📰</p>
+                    <p class="text-gray-400 text-xs mt-1">You can find your referral link above.</p>
+                  </div>
+                </div>
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 w-8 h-8 rounded-full bg-[#0a9875]/60 text-white font-bold text-lg flex items-center justify-center mr-4">2</div>
+                  <div>
+                    <p class="text-white text-sm font-medium">Share your referral link 📭</p>
+                    <p class="text-gray-400 text-xs mt-1">Send it to your friends, your family, make a YouTube video, a Tweet... Be creative!</p>
+                  </div>
+                </div>
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 w-8 h-8 rounded-full bg-[#0a9875]/40 text-white font-bold text-lg flex items-center justify-center mr-4">3</div>
+                  <div>
+                    <p class="text-white text-sm font-medium">Users register using your link 👪️</p>
+                    <p class="text-gray-400 text-xs mt-1">They will receive 250 <%= settings.website.coins %> for using your referral code!</p>
+                  </div>
+                </div>
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 w-8 h-8 rounded-full bg-[#0a9875]/20 text-white font-bold text-lg flex items-center justify-center mr-4">4</div>
+                  <div>
+                    <p class="text-white text-sm font-medium">Earn 100 <%= settings.website.coins %>! 🎉</p>
+                    <p class="text-gray-400 text-xs mt-1">You get free <%= settings.website.coins %>!</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <%- include('../components/footer') %>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const referralsContainer = document.querySelector('#referral-codes-container');
+      const totalUsesDisplay = document.querySelector('#total-uses');
+      const createReferralButton = document.getElementById('createRef');
+    
+      async function fetchReferrals() {
+        try {
+          const response = await fetch('/referral/list', {
+            method: 'GET',
+            credentials: 'include'
+          });
+          const data = await response.json();
+          if (data.referrals) {
+            displayReferrals(data.referrals);
+          }
+        } catch (error) {
+          console.error('Error fetching referrals:', error);
+        }
+      }
+    
+      function displayReferrals(referrals) {
+        if (referrals.length === 0) {
+          totalUsesDisplay.textContent = "You have no referral codes!";
+          return;
+        }
+        
+        const html = referrals.map(ref => `
+          <div class="border-b border-white/10 pb-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div>
+                <div class="flex items-center">
+                  <span class="text-white font-medium">${ref.code}</span>
+                  <span class="ml-2 text-xs bg-[#0a9875]/20 text-[#0a9875] px-2 py-0.5 rounded-full">${ref.uses} uses</span>
+                </div>
+                <p class="text-xs text-zinc-400 mt-1">Created on ${new Date(ref.created_at).toLocaleDateString()}</p>
+              </div>
+              <button onclick="copyRef('${ref.code}')" class="inline-flex items-center text-xs text-white bg-[#162027] hover:bg-[#1e2a33] px-3 py-1.5 rounded-full transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-1.5 text-[#0a9875]">
+                  <path fill-rule="evenodd" d="M15.988 3.012A2.25 2.25 0 0 1 18 5.25v6.5A2.25 2.25 0 0 1 15.75 14H13.5V7A2.5 2.5 0 0 0 11 4.5H8.128a2.252 2.252 0 0 1 1.884-1.488A2.25 2.25 0 0 1 12.25 1h1.5a2.25 2.25 0 0 1 2.238 2.012ZM11.5 3.25a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 .75.75v.25h-3v-.25Z" clip-rule="evenodd" />
+                  <path fill-rule="evenodd" d="M2 7a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7Zm2 3.25a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
+                </svg>
+                Copy Link
+              </button>
+            </div>
+          </div>
+        `).join('');
+        
+        referralsContainer.innerHTML = html;
+        const totalUses = referrals.reduce((acc, ref) => acc + ref.uses, 0);
+        totalUsesDisplay.textContent = `Your referral links have had a total of ${totalUses} uses.`;
+      }
+    
+      // Event listeners
+      createReferralButton.addEventListener('click', createReferralCode);
+    
+      async function createReferralCode() {
+        try {
+          const response = await fetch('/referral/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+          });
+          const data = await response.json();
+          if (data.code) {
+            fetchReferrals(); // Refresh the list after adding a new code
+          } else {
+            console.error('Failed to create referral code:', data.error);
+          }
+        } catch (error) {
+          console.error('Error creating referral code:', error);
+        }
+      }
+    
+      // Initial load
+      fetchReferrals();
+    });
+    
+    // Global function for the onclick handler
+    function copyRef(code) {
+      const fullLink = `<%= settings.api.client.oauth2.link %>/${code}`;
+      navigator.clipboard.writeText(fullLink);
+      
+      // Show a temporary success message
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-4 right-4 bg-[#0a9875] text-white px-4 py-2 rounded-lg shadow-lg z-50';
+      toast.textContent = 'Referral link copied!';
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add('fade-out');
+        setTimeout(() => {
+          document.body.removeChild(toast);
+        }, 300);
+      }, 2000);
+    }
+  </script>
+  
+  <style>
+    .fade-out {
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+  </style>
+</body>

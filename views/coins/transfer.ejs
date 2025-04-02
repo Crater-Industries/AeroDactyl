@@ -1,0 +1,127 @@
+<%- include('../components/head') %>
+
+<body class="bg-[#10181e]" style="font-family: 'Space Grotesk', sans-serif;">
+  <%
+    let ram = 0;
+    let disk = 0;
+    let cpu = 0;
+    let servers = pterodactyl.relationships.servers.data.length;
+    for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
+      ram = ram + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0);
+      disk = disk + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0);
+      cpu = cpu + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0);
+  }
+  %>
+  <%- include('../components/navigation') %>
+  <div class="md:pl-64 flex flex-col flex-1 min-h-screen"> 
+    <%- include('../components/header') %>
+    <main class="flex-1 pb-6 md:pb-8">
+      <div class="py-2 md:py-4">
+        <% /* Skeleton loader, lasts about 0.3s to let the page content load */ %>
+        <%- include('../components/skeleton') %>
+        <div class="hidden max-w-screen-2xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8" id="content">
+          
+          <div class="mb-6 md:mb-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+              <div class="mb-4 md:mb-0">
+                <h2 class="text-xl md:text-2xl font-semibold text-white tracking-tight">Transfer <%= settings.website.coins %></h2>
+                <p class="text-sm font-normal text-zinc-400 mt-1">Send <%= settings.website.coins %> to other users</p>
+              </div>
+            </div>
+          </div>
+          
+          <% if (req.query.err && req.query.err == "none") { %>
+            <div class="flex items-center bg-[#0a9875]/10 border-l-4 border-[#0a9875] rounded-r-lg p-4 mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" class="animate-spin h-5 w-5 text-[#0a9875] mr-3" viewBox="0 0 24 24" fill="none">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <div>
+                <p class="text-sm font-medium text-white">Processing your transfer</p>
+                <p class="text-xs text-zinc-400 mt-1">Please allow up to 60 seconds for the transfer to be completed.</p>
+              </div>
+            </div>
+          <% } %>
+          
+          <div class="bg-gradient-to-r from-[#162027]/80 to-[#162027]/30 rounded-xl md:rounded-2xl p-5 md:p-6 border-t border-white/5 shadow-lg">
+            <div class="mb-6">
+              <div class="flex items-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-[#0a9875] mr-2">
+                  <path d="M10.75 10.818v2.614A3.13 3.13 0 0011.888 13c.482-.315.612-.648.612-.875 0-.227-.13-.56-.612-.875a3.13 3.13 0 00-1.138-.432zM8.33 8.62c.053.055.115.11.184.164.208.16.46.284.736.363V6.603a2.45 2.45 0 00-.35.13c-.14.065-.27.143-.386.233-.377.292-.514.627-.514.909 0 .184.058.39.202.592.037.051.08.102.128.152z" />
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-6a.75.75 0 01.75.75v.316a3.78 3.78 0 011.653.713c.426.33.744.74.925 1.2a.75.75 0 01-1.395.55 1.35 1.35 0 00-.447-.563 2.187 2.187 0 00-.736-.363V9.3c.698.093 1.383.32 1.959.696.787.514 1.29 1.27 1.29 2.13 0 .86-.504 1.616-1.29 2.13-.576.377-1.261.603-1.96.696v.299a.75.75 0 11-1.5 0v-.3c-.697-.092-1.382-.318-1.958-.695-.482-.315-.857-.717-1.078-1.188a.75.75 0 111.359-.636c.08.173.245.376.54.569.313.205.706.353 1.138.432v-2.748a3.782 3.782 0 01-1.653-.713C6.9 9.433 6.5 8.681 6.5 7.875c0-.805.4-1.558 1.097-2.096a3.78 3.78 0 011.653-.713V4.75A.75.75 0 0110 4z" clip-rule="evenodd" />
+                </svg>
+                <h3 class="text-lg font-medium text-white">Transfer Details</h3>
+              </div>
+              
+              <div class="space-y-4">
+                <div>
+                  <label for="dc" class="block text-sm font-medium text-white mb-1">Recipient User ID</label>
+                  <div class="relative rounded-lg shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-zinc-500">
+                        <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 00-13.074.003z" />
+                      </svg>
+                    </div>
+                    <input type="text" id="dc" class="bg-[#162027]/50 border border-white/5 text-zinc-300 text-sm rounded-lg focus:ring-[#0a9875] focus:border-[#0a9875] block w-full pl-10 p-2.5" placeholder="Enter user ID (e.g., 123456789012345678)">
+                  </div>
+                  <p class="mt-1 text-xs text-zinc-500">Enter the ID of the user you want to send <%= settings.website.coins %> to</p>
+                </div>
+                
+                <div>
+                  <label for="amount" class="block text-sm font-medium text-white mb-1"><%= settings.website.coins %> Amount</label>
+                  <div class="relative rounded-lg shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-zinc-500">
+                        <path d="M10.75 10.818v2.614A3.13 3.13 0 0011.888 13c.482-.315.612-.648.612-.875 0-.227-.13-.56-.612-.875a3.13 3.13 0 00-1.138-.432zM8.33 8.62c.053.055.115.11.184.164.208.16.46.284.736.363V6.603a2.45 2.45 0 00-.35.13c-.14.065-.27.143-.386.233-.377.292-.514.627-.514.909 0 .184.058.39.202.592.037.051.08.102.128.152z" />
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-6a.75.75 0 01.75.75v.316a3.78 3.78 0 011.653.713c.426.33.744.74.925 1.2a.75.75 0 01-1.395.55 1.35 1.35 0 00-.447-.563 2.187 2.187 0 00-.736-.363V9.3c.698.093 1.383.32 1.959.696.787.514 1.29 1.27 1.29 2.13 0 .86-.504 1.616-1.29 2.13-.576.377-1.261.603-1.96.696v.299a.75.75 0 11-1.5 0v-.3c-.697-.092-1.382-.318-1.958-.695-.482-.315-.857-.717-1.078-1.188a.75.75 0 111.359-.636c.08.173.245.376.54.569.313.205.706.353 1.138.432v-2.748a3.782 3.782 0 01-1.653-.713C6.9 9.433 6.5 8.681 6.5 7.875c0-.805.4-1.558 1.097-2.096a3.78 3.78 0 011.653-.713V4.75A.75.75 0 0110 4z" clip-rule="evenodd" />
+                      </svg>
+                    </div>
+                    <input type="text" id="amount" class="bg-[#162027]/50 border border-white/5 text-zinc-300 text-sm rounded-lg focus:ring-[#0a9875] focus:border-[#0a9875] block w-full pl-10 p-2.5" placeholder="<%= (coins.toFixed(2)) %>">
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                      <span class="text-zinc-500 text-sm"><%= settings.website.coins %></span>
+                    </div>
+                  </div>
+                  <p class="mt-1 text-xs text-zinc-500">You have <span class="text-[#0a9875]"><%= (coins.toFixed(2)) %> <%= settings.website.coins %></span> available</p>
+                </div>
+                
+                <div class="pt-2">
+                  <button onclick="submitForm()" class="w-full md:w-auto inline-flex items-center justify-center rounded-lg bg-[#0a9875] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#0cae86] focus:outline-none focus:ring-2 focus:ring-[#0a9875] focus:ring-offset-2 focus:ring-offset-[#162027] transition-all duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-2">
+                      <path d="M3.105 2.289a.75.75 0 00-.826.95l1.414 4.925A1.5 1.5 0 005.135 9.25h6.115a.75.75 0 010 1.5H5.135a1.5 1.5 0 00-1.442 1.086l-1.414 4.926a.75.75 0 00.826.95 28.896 28.896 0 0015.293-7.154.75.75 0 000-1.115A28.897 28.897 0 003.105 2.289z" />
+                    </svg>
+                    Transfer <%= settings.website.coins %>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-6 md:mt-8">
+            <div class="flex items-center mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-[#0a9875] mr-2">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" />
+              </svg>
+              <h3 class="text-lg font-medium text-white">Transfer Tips</h3>
+            </div>
+            
+            <ul class="text-sm text-zinc-400 space-y-2 ml-4 list-disc">
+              <li>Double-check the recipient's user ID before transferring.</li>
+              <li>Transfers are permanent and cannot be reversed.</li>
+              <li>You can only transfer whole number amounts (no decimals).</li>
+              <li>The minimum transfer amount is 1 <%= settings.website.coins %>.</li>
+            </ul>
+          </div>
+          
+          <script>
+            async function submitForm() {
+              let id = encodeURIComponent(document.getElementById("dc").value);
+              let coins = encodeURIComponent(document.getElementById("amount").value);
+              document.location.href = `/giftcoins?id=${id}&coins=${coins}`;
+            };
+          </script>
+        </div>
+      </div>
+    </main>
+    <%- include('../components/footer') %>
+  </div>
+</body>

@@ -1,0 +1,97 @@
+<%- include('../components/head') %>
+
+<body class="bg-[#10181e]" style="font-family: 'Space Grotesk', sans-serif;">
+  <%- include('../components/navigation') %>
+  <div class="md:pl-64 flex flex-col flex-1 min-h-screen"> 
+    <%- include('../components/header') %>
+    <main class="flex-1 pb-6 md:pb-8">
+      <div class="py-2 md:py-4">
+        <% /* Skeleton loader, lasts about 0.3s to let the page content load */ %>
+        <%- include('../components/skeleton') %>
+        <div class="hidden max-w-screen-2xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8" id="content">
+          
+          <div class="mb-6 md:mb-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+              <div class="mb-4 md:mb-0">
+                <h2 class="text-xl md:text-2xl font-semibold text-white tracking-tight">AFK Rewards</h2>
+                <p class="text-sm font-normal text-zinc-400 mt-1">Earn <%= settings.website.coins %> just by staying on this page</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex flex-col items-center justify-center py-12 md:py-16 lg:py-20">
+            <div class="relative mb-6 md:mb-8">
+              <div class="w-48 h-48 md:w-56 md:h-56 rounded-full bg-[#162027]/50 flex items-center justify-center">
+                <div class="w-40 h-40 md:w-48 md:h-48 rounded-full bg-[#162027] border border-[#0a9875]/20 flex items-center justify-center shadow-lg">
+                  <div class="text-center">
+                    <p class="text-white font-semibold text-4xl md:text-5xl lg:text-6xl"><span id="arciotimer"></span></p>
+                    <p class="text-zinc-400 text-sm md:text-base mt-1">seconds</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <p class="text-zinc-300 text-lg md:text-xl font-medium text-center">
+              Waiting to earn <span class="text-[#0a9875] font-semibold"><%= settings.api.afk.coins %> <%= settings.website.coins %></span>
+            </p>
+            <p class="text-zinc-400 text-sm md:text-base text-center mt-2">
+              Stay on this page to automatically collect your rewards
+            </p>
+            <span class="hidden" id="arciogainedcoins">0</span>
+            <p class="hidden">Duration: <span id="sessionDuration">-</span></p>
+          </div>
+          
+          <div class="mt-8 md:mt-12">
+            <div class="flex items-center mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-[#0a9875] mr-2">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" />
+              </svg>
+              <h3 class="text-lg font-medium text-white">How It Works</h3>
+            </div>
+            
+            <div class="flex flex-col md:flex-row gap-4 md:gap-6">
+              <div class="flex-1 p-4 border border-white/5 rounded-xl bg-[#162027]/30">
+                <div class="flex items-center mb-2">
+                  <div class="w-6 h-6 rounded-full bg-[#0a9875]/20 flex items-center justify-center mr-2">
+                    <span class="text-[#0a9875] text-xs font-medium">1</span>
+                  </div>
+                  <p class="text-white text-sm font-medium">Stay Active</p>
+                </div>
+                <p class="text-zinc-400 text-xs">Keep this page open in your browser. The timer will count down automatically.</p>
+              </div>
+              
+              <div class="flex-1 p-4 border border-white/5 rounded-xl bg-[#162027]/30">
+                <div class="flex items-center mb-2">
+                  <div class="w-6 h-6 rounded-full bg-[#0a9875]/20 flex items-center justify-center mr-2">
+                    <span class="text-[#0a9875] text-xs font-medium">2</span>
+                  </div>
+                  <p class="text-white text-sm font-medium">Collect Rewards</p>
+                </div>
+                <p class="text-zinc-400 text-xs">When the timer reaches zero, you'll automatically receive <%= settings.api.afk.coins %> <%= settings.website.coins %>.</p>
+              </div>
+              
+              <div class="flex-1 p-4 border border-white/5 rounded-xl bg-[#162027]/30">
+                <div class="flex items-center mb-2">
+                  <div class="w-6 h-6 rounded-full bg-[#0a9875]/20 flex items-center justify-center mr-2">
+                    <span class="text-[#0a9875] text-xs font-medium">3</span>
+                  </div>
+                  <p class="text-white text-sm font-medium">Repeat</p>
+                </div>
+                <p class="text-zinc-400 text-xs">The timer will reset automatically. Keep the page open to continue earning <%= settings.website.coins %>.</p>
+              </div>
+            </div>
+          </div>
+          
+          <script>
+            <%- arcioafktext %>
+            // Afk page fix by ice (blueiicey)
+            window.alert = function () {
+                window.location.href = window.location.href;
+            };
+          </script>
+        </div>
+      </div>
+    </main>
+    <%- include('../components/footer') %>
+  </div>
+</body>

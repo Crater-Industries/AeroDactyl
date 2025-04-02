@@ -1,0 +1,60 @@
+<head>
+  <title><%= settings.name %></title>
+  <link rel="icon" type="image/x-icon" href="<%= settings.icon %>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://unpkg.com/@popperjs/core@2.10.1/dist/umd/popper.min.js"></script>
+
+  <!-- Inter font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  
+  <!-- Include the top loader -->
+  <%- include('./toploader') %>
+  
+  <!-- Custom Scrollbar Styling -->
+  <style>
+    /* Modern scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 32, 0.6);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #0a9875;
+      border-radius: 4px;
+      transition: background 0.3s ease;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #0cae86;
+    }
+    
+    /* Firefox scrollbar styling */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #0a9875 rgba(15, 23, 32, 0.6);
+    }
+    
+    /* For dark mode preference */
+    @media (prefers-color-scheme: dark) {
+      ::-webkit-scrollbar-track {
+        background: rgba(10, 17, 24, 0.8);
+      }
+      
+      * {
+        scrollbar-color: #0a9875 rgba(10, 17, 24, 0.8);
+      }
+    }
+    
+    /* Smooth scrolling for the entire page */
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>

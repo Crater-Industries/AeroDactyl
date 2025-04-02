@@ -1,0 +1,79 @@
+<html class="h-full">
+<%- include('./components/head') %>
+<% if (userinfo) { %>
+   <meta http-equiv="Refresh" content="0; url='../dashboard'" />
+<% } %>
+
+<body class="min-h-screen bg-[#0a1118] flex items-center justify-center p-4 md:p-8" style="font-family: 'Space Grotesk'">
+    <div class="container mx-auto px-4 py-8">
+      
+        <div class="flex justify-start mb-8 md:mb-12">
+            <div class="flex items-center gap-3 max-w-5xl mx-auto w-full pl-0 md:pl-0">
+             
+                <div class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center">
+                    <img src="<%= settings.homepage_logo || settings.logo %>" alt="<%= settings.name %> Logo" class="h-full w-auto object-contain">
+                </div>
+                <h1 class="text-2xl md:text-3xl font-bold text-white tracking-tight"><%= settings.name %></h1>
+            </div>
+        </div>
+        
+ 
+        <div class="max-w-5xl mx-auto flex flex-col md:flex-row gap-6 md:gap-8 justify-center items-center">
+        
+            <div class="w-full md:w-2/5 bg-[#151f28]/80 backdrop-blur-sm border border-white/10 rounded-xl md:rounded-2xl p-6 md:p-8 flex flex-col h-auto md:h-[450px] shadow-xl shadow-black/20">
+                <div class="mb-4 md:mb-6">
+                    <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">👋 Welcome Back</h2>
+                    <p class="text-zinc-400 text-sm md:text-base">Sign in to continue to your dashboard</p>
+                </div>
+                
+                <div class="mb-4 md:mb-4">
+                    <h3 class="text-lg font-bold text-white mb-2">Seamless Experience</h3>
+                    <p class="text-zinc-400 text-sm mb-3 md:mb-4">Login to your <%= settings.name %> account through Discord OAuth2. New users will have an account created automatically.</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-3 md:mb-4">
+                        <div class="bg-[#1c2732]/70 px-3 py-1.5 md:px-4 md:py-2 rounded-lg border border-white/5">
+                            <p class="text-white text-xs font-medium">🔒 Secure</p>
+                        </div>
+                        <div class="bg-[#1c2732]/70 px-3 py-1.5 md:px-4 md:py-2 rounded-lg border border-white/5">
+                            <p class="text-white text-xs font-medium">⚡ Instant</p>
+                        </div>
+                        <div class="bg-[#1c2732]/70 px-3 py-1.5 md:px-4 md:py-2 rounded-lg border border-white/5">
+                            <p class="text-white text-xs font-medium">🛠️ Control</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex-grow flex flex-col justify-center py-4 md:py-0">
+                   
+                    <a href="../login" class="w-full max-w-md mx-auto py-3 px-5 bg-[#0a9875] hover:bg-[#0cae86] rounded-xl transition-all duration-200 flex items-center justify-center gap-3 shadow-lg shadow-[#0a9875]/20 transform hover:translate-y-[-1px]">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 127.14 96.36" fill="white" class="flex-shrink-0">
+                            <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+                        </svg>
+                        <span class="font-medium text-white text-base">Continue with Discord</span>
+                    </a>
+                </div>
+                
+                <div class="mt-4 md:mt-auto text-center">
+                    <span class="text-xs text-zinc-400">
+                        Need assistance? Join our 
+                        <a href="<%= settings.website.discord %>" class="text-[#0cae86] hover:text-[#0dd196] hover:underline transition-colors">Discord Server</a>
+                    </span>
+                </div>
+            </div>
+            
+        
+            <div class="w-full md:w-3/5 h-[300px] md:h-[450px] mt-6 md:mt-0 flex items-center justify-center ">
+                <div class="relative h-full w-full flex items-center justify-center">
+                    <img src="../assets/loginimg.webp" alt="Login Image" class="w-full h-full object-contain rounded-xl" />
+                </div>
+            </div>
+        </div>
+        
+      
+        <div class="mt-8 md:mt-12 text-center">
+            <p class="text-zinc-500 text-xs md:text-sm">&copy; <%= new Date().getFullYear() %> <%= settings.name %>. All rights reserved.</p>
+            <p class="text-zinc-500 text-xs md:text-sm">Developed by <a href="https://github.com/craterXO" class="text-[#0cae86] hover:text-[#0dd196] hover:underline transition-colors">Crater</a></p>
+        </div>
+    </div>
+</body>
+</html>

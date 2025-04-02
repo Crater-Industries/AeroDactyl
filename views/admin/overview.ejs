@@ -1,0 +1,244 @@
+<%- include('../components/head') %>
+
+<body class="bg-[#10181e]" style="font-family: 'Space Grotesk', sans-serif;">
+  <div>
+    <%- include('../components/adminnav') %>
+    <div class="md:pl-64 flex flex-col flex-1 min-h-screen"> 
+      <%- include('../components/header') %>
+      <main class="flex-1 pb-8">
+        <div class="py-4 md:py-6">
+          <% /* Skeleton loader, lasts about 0.3s to let the page content load */ %>
+          <%- include('../components/skeleton') %>
+          <div class="hidden max-w-screen-2xl mx-auto px-4 sm:px-6 md:px-8" id="content">
+            <!-- Header Section -->
+            <div class="bg-gradient-to-r from-[#162027]/80 to-[#162027]/30 rounded-xl md:rounded-2xl p-4 md:p-6 mb-4 md:mb-6 border-t border-white/5 shadow-lg">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="mb-3 md:mb-0">
+                  <h2 class="text-lg md:text-xl font-semibold text-white tracking-tight">Admin Overview</h2>
+                  <p class="text-xs md:text-sm font-normal text-zinc-400 mt-1">Welcome to the <%= settings.name %> admin panel.</p>
+                </div>
+                <div class="flex space-x-3">
+                  <a href="/dashboard" class="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+                    </svg>
+                    Return to Dashboard
+                  </a>
+                </div>
+              </div>
+            </div>
+            
+            <% if (req.query.err) { %>
+            <div class="rounded-xl md:rounded-2xl border border-white/5 p-4 mb-5 bg-red-500/10">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <p class="text-sm text-white">Error code: <code class="bg-white/10 px-1.5 py-0.5 rounded-md"><%= req.query.err %></code></p>
+                </div>
+              </div>
+            </div>
+            <% } %>
+            
+            <% if (req.query.success) { %>
+            <div class="rounded-xl md:rounded-2xl border border-white/5 p-4 mb-5 bg-green-500/10">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <p class="text-sm text-white"><%= req.query.success %></p>
+                </div>
+              </div>
+            </div>
+            <% } %>
+            
+            <% if (pterodactyl.root_admin == true) { %>
+            <!-- Aerodactyl Information Card -->
+            <div class="bg-gradient-to-r from-[#162027]/80 to-[#162027]/30 rounded-xl md:rounded-2xl p-4 md:p-6 mb-4 md:mb-6 border-t border-white/5 shadow-lg">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <img src="<%= settings.logo %>" alt="<%= settings.name %> Logo" class="h-12 w-auto mr-4">
+                  <div>
+                    <h2 class="text-lg md:text-xl font-semibold text-white"><%= settings.name %></h2>
+                    <div class="flex items-center mt-1">
+                      <div class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400 mr-2">
+                        <span class="w-1.5 h-1.5 mr-1 rounded-full bg-green-400"></span>
+                        Up to date
+                      </div>
+                      <span class="text-xs md:text-sm text-zinc-400">Version <%= settings.version %></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="hidden md:block">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
+                    </svg>
+                    Stable Release
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              <!-- Discord Support Button - Blue -->
+              <a href="<%= settings.discord %>" target="_blank" class="flex items-center justify-center p-4 bg-[#5865F2]/10 rounded-xl border border-[#5865F2]/20 hover:bg-[#5865F2]/20 transition-all duration-200 group">
+                <div class="flex items-center space-x-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#5865F2]">
+                    <path d="M18 9V6c0-1.1-.9-2-2-2H4a2 2 0 0 0-2 2v11c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-3"/>
+                    <path d="M15 12H6"/>
+                    <path d="m9 15-3-3 3-3"/>
+                  </svg>
+                  <div class="text-left">
+                    <h3 class="text-sm font-medium text-[#5865F2] group-hover:text-[#5865F2] transition-colors">Discord Support</h3>
+                    <p class="text-xs text-[#5865F2]/60">Get help via Discord</p>
+                  </div>
+                </div>
+              </a>
+
+              <!-- Documentation Button - Green -->
+              <a href="https://docs.aerodactyl.dev" target="_blank" class="flex items-center justify-center p-4 bg-[#0a9875]/10 rounded-xl border border-[#0a9875]/20 hover:bg-[#0a9875]/20 transition-all duration-200 group">
+                <div class="flex items-center space-x-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#0a9875]">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                  </svg>
+                  <div class="text-left">
+                    <h3 class="text-sm font-medium text-[#0a9875] group-hover:text-[#0a9875] transition-colors">Documentation</h3>
+                    <p class="text-xs text-[#0a9875]/60">Read the docs</p>
+                  </div>
+                </div>
+              </a>
+
+              <!-- GitHub Button - Yellow -->
+              <a href="https://github.com/Aerodactyl" target="_blank" class="flex items-center justify-center p-4 bg-[#EAB308]/10 rounded-xl border border-[#EAB308]/20 hover:bg-[#EAB308]/20 transition-all duration-200 group">
+                <div class="flex items-center space-x-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#EAB308]">
+                    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/>
+                    <path d="M9 18c-4.51 2-5-2-7-2"/>
+                  </svg>
+                  <div class="text-left">
+                    <h3 class="text-sm font-medium text-[#EAB308] group-hover:text-[#EAB308] transition-colors">GitHub</h3>
+                    <p class="text-xs text-[#EAB308]/60">View source code</p>
+                  </div>
+                </div>
+              </a>
+
+              <!-- Support Project Button - Purple -->
+              <a href="https://github.com/sponsors/Aerodactyl" target="_blank" class="flex items-center justify-center p-4 bg-[#A855F7]/10 rounded-xl border border-[#A855F7]/20 hover:bg-[#A855F7]/20 transition-all duration-200 group">
+                <div class="flex items-center space-x-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#A855F7]">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                  </svg>
+                  <div class="text-left">
+                    <h3 class="text-sm font-medium text-[#A855F7] group-hover:text-[#A855F7] transition-colors">Support Project</h3>
+                    <p class="text-xs text-[#A855F7]/60">Sponsor on GitHub</p>
+                  </div>
+                </div>
+              </a>
+            </div>
+            
+            <!-- Pterodactyl Panel Statistics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              <!-- Users Stat Card -->
+              <div class="bg-[#162027]/50 rounded-xl p-4 border-t border-white/5 shadow-lg">
+                <div class="flex items-center">
+                  <div class="p-2 rounded-lg bg-green-500/10 mr-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-green-400">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-xs text-zinc-400">Total Users</p>
+                    <h3 class="text-xl font-semibold text-white"><%= panelStats.users.total.toLocaleString() %></h3>
+                  </div>
+                </div>
+                <div class="mt-3 pt-3 border-t border-white/5">
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs text-zinc-400">Active this month</span>
+                    <span class="text-xs font-medium text-green-400">+<%= panelStats.users.activePercent %>%</span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Servers Stat Card -->
+              <div class="bg-[#162027]/50 rounded-xl p-4 border-t border-white/5 shadow-lg">
+                <div class="flex items-center">
+                  <div class="p-2 rounded-lg bg-green-500/10 mr-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-green-400">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 0 1-3-3m3 3a3 3 0 1 0 0 6h13.5a3 3 0 1 0 0-6m-16.5-3a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3m-19.5 0a4.5 4.5 0 0 1 .9-2.7L5.737 5.1a3.375 3.375 0 0 1 2.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 0 1 .9 2.7m0 0a3 3 0 0 1-3 3m0 3h.008v.008h-.008v-.008Zm0-6h.008v.008h-.008v-.008Zm-3 6h.008v.008h-.008v-.008Zm0-6h.008v.008h-.008v-.008Z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-xs text-zinc-400">Total Servers</p>
+                    <h3 class="text-xl font-semibold text-white"><%= panelStats.servers.total.toLocaleString() %></h3>
+                  </div>
+                </div>
+                <div class="mt-3 pt-3 border-t border-white/5">
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs text-zinc-400">Active servers</span>
+                    <span class="text-xs font-medium text-green-400"><%= panelStats.servers.active.toLocaleString() %></span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Locations Stat Card -->
+              <div class="bg-[#162027]/50 rounded-xl p-4 border-t border-white/5 shadow-lg">
+                <div class="flex items-center">
+                  <div class="p-2 rounded-lg bg-green-500/10 mr-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-green-400">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-xs text-zinc-400">Locations</p>
+                    <h3 class="text-xl font-semibold text-white"><%= panelStats.locations.total %></h3>
+                  </div>
+                </div>
+                <div class="mt-3 pt-3 border-t border-white/5">
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs text-zinc-400">Most active</span>
+                    <span class="text-xs font-medium text-white"><%= panelStats.locations.mostActive %></span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Nodes Stat Card -->
+              <div class="bg-[#162027]/50 rounded-xl p-4 border-t border-white/5 shadow-lg">
+                <div class="flex items-center">
+                  <div class="p-2 rounded-lg bg-green-500/10 mr-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-green-400">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-2.25-1.313M21 7.5v2.25m0-2.25l-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3l2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75 2.25-1.313M12 21.75V19.5m0 2.25-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-xs text-zinc-400">Total Nodes</p>
+                    <h3 class="text-xl font-semibold text-white"><%= panelStats.nodes.total %></h3>
+                  </div>
+                </div>
+                <div class="mt-3 pt-3 border-t border-white/5">
+                  <div class="flex justify-between items-center">
+                    <span class="text-xs text-zinc-400">Online</span>
+                    <span class="text-xs font-medium text-green-400"><%= panelStats.nodes.online %></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <% } %>
+          </div>
+        </div>
+      </main>
+      <%- include('../components/footer') %>
+      <%- include('../components/notifications') %>
+    </div>
+  </div>
+</body>
+</rewritten_file>

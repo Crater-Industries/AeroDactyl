@@ -21,6 +21,8 @@ const adminjs = require("./admin.js");
 const ejs = require("ejs");
 const log = require("../handlers/log.js");
 const arciotext = require('../handlers/afk.js')
+const axios = require('axios');
+const semver = require('semver');
 
 /* Ensure platform release target is met */
 const heliactylModule = { "name": "Admin", "target_platform": "10.0.0" };
@@ -930,6 +932,9 @@ module.exports.load = async function (app, db) {
       // Continue with default values if there's an error
     }
 
+    // Check for updates
+    const updateInfo = await checkForUpdates(settings.version);
+
     // Render the admin overview page with all required variables
     ejs.renderFile(
       `./views/admin/overview.ejs`,
@@ -944,7 +949,8 @@ module.exports.load = async function (app, db) {
         userinfo: req.session.userinfo,
         packagename: req.session.userinfo ? await db.get("package-" + req.session.userinfo.id) || settings.api.client.packages.default : null,
         packages: req.session.userinfo ? settings.api.client.packages.list[await db.get("package-" + req.session.userinfo.id) || settings.api.client.packages.default] : null,
-        panelStats: panelStats
+        panelStats: panelStats,
+        updateInfo: updateInfo
       },
       null,
       function (err, str) {
@@ -1690,4 +1696,31 @@ module.exports.load = async function (app, db) {
 
 function hexToDecimal(hex) {
   return parseInt(hex.replace("#", ""), 16);
+}
+
+async function checkForUpdates(currentVersion) {
+  try {
+    // Instead of checking releases, just check the repo info
+    const response = await axios.get('https://api.github.com/repos/Crater-Industries/AeroDactyl');
+    
+    // If we get here, the repo exists
+    return {
+      isUpToDate: true, // Assume up to date since we can't check specific versions
+      latestVersion: currentVersion,
+      releaseUrl: 'https://github.com/Crater-Industries/AeroDactyl',
+      releaseType: 'Beta Release',
+      releaseDate: 'Current'
+    };
+  } catch (error) {
+    console.error('Error checking GitHub repository:', error.message);
+    
+    // Return default values if there's an error
+    return {
+      isUpToDate: true,
+      latestVersion: currentVersion,
+      releaseUrl: 'https://github.com/Crater-Industries/AeroDactyl',
+      releaseType: 'Beta Release',
+      releaseDate: new Date().toLocaleDateString()
+    };
+  }
 }

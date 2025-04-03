@@ -67,20 +67,43 @@
                   <div>
                     <h2 class="text-lg md:text-xl font-semibold text-white"><%= settings.name %></h2>
                     <div class="flex items-center mt-1">
-                      <div class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400 mr-2">
-                        <span class="w-1.5 h-1.5 mr-1 rounded-full bg-green-400"></span>
-                        Up to date
-                      </div>
+                      <% if (updateInfo.isUpToDate) { %>
+                        <div class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400 mr-2">
+                          <span class="w-1.5 h-1.5 mr-1 rounded-full bg-green-400"></span>
+                          Up to date
+                        </div>
+                      <% } else { %>
+                        <div class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-400 mr-2">
+                          <span class="w-1.5 h-1.5 mr-1 rounded-full bg-yellow-400"></span>
+                          Update available
+                        </div>
+                      <% } %>
                       <span class="text-xs md:text-sm text-zinc-400">Version <%= settings.version %></span>
+                      <% if (!updateInfo.isUpToDate) { %>
+                        <span class="text-xs md:text-sm text-zinc-400 ml-2">(Latest: <%= updateInfo.latestVersion %>)</span>
+                      <% } %>
                     </div>
                   </div>
                 </div>
-                <div class="hidden md:block">
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400">
+                <div class="hidden md:flex items-center space-x-3">
+                  <% if (!updateInfo.isUpToDate) { %>
+                    <a href="<%= updateInfo.releaseUrl %>" target="_blank" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#0a9875]/20 text-[#0a9875] hover:bg-[#0a9875]/30 transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                      </svg>
+                      Update Now
+                    </a>
+                  <% } %>
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium 
+                    <% if (updateInfo.releaseType === 'Beta Release') { %>
+                      bg-yellow-500/20 text-yellow-400
+                    <% } else { %>
+                      bg-blue-500/20 text-blue-400
+                    <% } %>">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
                     </svg>
-                    Stable Release
+                    <%= updateInfo.releaseType %>
                   </span>
                 </div>
               </div>
@@ -104,7 +127,7 @@
               </a>
 
               <!-- Documentation Button - Green -->
-              <a href="https://docs.aerodactyl.dev" target="_blank" class="flex items-center justify-center p-4 bg-[#0a9875]/10 rounded-xl border border-[#0a9875]/20 hover:bg-[#0a9875]/20 transition-all duration-200 group">
+              <a href="https://github.com/Crater-Industries/AeroDactyl" target="_blank" class="flex items-center justify-center p-4 bg-[#0a9875]/10 rounded-xl border border-[#0a9875]/20 hover:bg-[#0a9875]/20 transition-all duration-200 group">
                 <div class="flex items-center space-x-3">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#0a9875]">
                     <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>

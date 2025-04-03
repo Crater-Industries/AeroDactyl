@@ -126,6 +126,11 @@ iso = "GB"
 pro = false
 show = true
 
+# Maximum resource allocations
+[resources]
+max_ram = 6_144  
+max_disk = 20_480  
+max_cpu = 400  
 
 [api.client.eggs.papermc]
 pro = false

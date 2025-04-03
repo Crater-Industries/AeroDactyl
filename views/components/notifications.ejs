@@ -6,7 +6,9 @@
     const error = urlParams.get('error');
     const success = urlParams.get('success');
     const errorType = urlParams.get('errortype') || 'error';
+    const err = urlParams.get('err');
     
+    // Server management error messages
     const errorMessages = {
       'SERVER_NOT_FOUND': 'The server could not be found.',
       'SERVER_DELETION_FAILED': 'An error has occurred while attempting to delete the server.',
@@ -29,23 +31,59 @@
       'ERRORONMODIFY': 'An error occurred while modifying your server.'
     };
     
+    // Server management success messages
     const successMessages = {
       'SERVER_DELETED': 'Server has been successfully deleted.',
       'CREATED': 'Server has been successfully created.',
       'MODIFIED': 'Server has been successfully modified.'
     };
     
+    // Coin management error messages
+    const coinErrorMessages = {
+      'MISSINGID': 'Missing user ID.',
+      'INVALIDID': 'Invalid user ID.',
+      'MISSINGCOINS': 'Missing coin amount.',
+      'INVALIDCOINNUMBER': 'Invalid coin amount.',
+      'COINSIZE': 'Coin amount must be between 0 and 999,999,999,999,999.'
+    };
+    
+    // Resource management error messages
+    const resourceErrorMessages = {
+      'MISSINGID': 'Missing user ID.',
+      'INVALIDID': 'Invalid user ID.',
+      'RAMSIZE': 'RAM amount must be between 0 and 999,999,999,999,999.',
+      'DISKSIZE': 'Disk amount must be between 0 and 999,999,999,999,999.',
+      'CPUSIZE': 'CPU amount must be between 0 and 999,999,999,999,999.',
+      'SERVERSIZE': 'Server amount must be between 0 and 999,999,999,999,999.'
+    };
+    
+    // Check for server management notifications
     if (error && errorMessages[error]) {
       showNotification(errorMessages[error], errorType);
     } else if (success && successMessages[success]) {
       showNotification(successMessages[success], 'success');
     }
     
-    if (error || success) {
+    // Check for coin and resource management notifications
+    if (err) {
+      if (err === 'none') {
+        showNotification('Operation completed successfully.', 'success');
+      } else if (coinErrorMessages[err]) {
+        showNotification(coinErrorMessages[err], 'error');
+      } else if (resourceErrorMessages[err]) {
+        showNotification(resourceErrorMessages[err], 'error');
+      } else {
+        showNotification(err, 'error');
+      }
+    }
+    
+    // Clean up URL parameters
+    if (error || success || err) {
       const url = new URL(window.location);
       url.searchParams.delete('error');
       url.searchParams.delete('success');
       url.searchParams.delete('errortype');
+      url.searchParams.delete('err');
       window.history.replaceState({}, '', url);
     }
   });

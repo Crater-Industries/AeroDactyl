@@ -21,36 +21,6 @@
               </div>
             </div>
             
-            <% if (req.query.err) { %>
-            <div class="rounded-xl md:rounded-2xl border border-white/5 p-4 mb-5 bg-red-500/10">
-              <div class="flex">
-                <div class="flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                  </svg>
-                </div>
-                <div class="ml-3">
-                  <p class="text-sm text-white">Error code: <code class="bg-white/10 px-1.5 py-0.5 rounded-md"><%= req.query.err %></code></p>
-                </div>
-              </div>
-            </div>
-            <% } %>
-            
-            <% if (req.query.success) { %>
-            <div class="rounded-xl md:rounded-2xl border border-white/5 p-4 mb-5 bg-green-500/10">
-              <div class="flex">
-                <div class="flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                </div>
-                <div class="ml-3">
-                  <p class="text-sm text-white"><%= req.query.success %></p>
-                </div>
-              </div>
-            </div>
-            <% } %>
-            
             <% if (pterodactyl.root_admin == true) { %>
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
               <div class="relative flex flex-col space-y-3 rounded-xl md:rounded-2xl bg-[#162027]/30 shadow border-t border-white/5 px-5 py-4 md:px-6 md:py-5 transition">
@@ -107,15 +77,39 @@
   </div>
   <script>
     async function addCoins() {
-      let id1 = encodeURIComponent(document.getElementById("id1").value);
-      let amount1 = encodeURIComponent(document.getElementById("amount1").value);
-      document.location.href = `/addcoins?id=${id1}&coins=${amount1}`;
-    };
+      const id = document.getElementById("id1").value.trim();
+      const amount = document.getElementById("amount1").value.trim();
+      
+      if (!id) {
+        showNotification("Please enter a Discord ID", "error");
+        return;
+      }
+      
+      if (!amount || isNaN(amount) || parseInt(amount) <= 0) {
+        showNotification("Please enter a valid amount", "error");
+        return;
+      }
+      
+      document.location.href = `/addcoins?id=${encodeURIComponent(id)}&coins=${encodeURIComponent(amount)}`;
+    }
     
     async function removeCoins() {
-      let id2 = encodeURIComponent(document.getElementById("id2").value);
-      let amount2 = encodeURIComponent(document.getElementById("amount2").value);
-      document.location.href = `/removecoins?id=${id2}&coins=${amount2}`;
-    };
+      const id = document.getElementById("id2").value.trim();
+      const amount = document.getElementById("amount2").value.trim();
+      
+      if (!id) {
+        showNotification("Please enter a Discord ID", "error");
+        return;
+      }
+      
+      if (!amount || isNaN(amount) || parseInt(amount) <= 0) {
+        showNotification("Please enter a valid amount", "error");
+        return;
+      }
+      
+      // Create a negative amount for removal
+      const negativeAmount = -Math.abs(parseFloat(amount));
+      document.location.href = `/addcoins?id=${encodeURIComponent(id)}&coins=${encodeURIComponent(negativeAmount)}`;
+    }
   </script>
 </body>

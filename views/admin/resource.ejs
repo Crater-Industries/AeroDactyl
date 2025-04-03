@@ -19,36 +19,6 @@
               </div>
             </div>
             
-            <% if (req.query.err) { %>
-            <div class="rounded-xl md:rounded-2xl border border-white/5 p-4 mb-5 bg-red-500/10">
-              <div class="flex">
-                <div class="flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                  </svg>
-                </div>
-                <div class="ml-3">
-                  <p class="text-sm text-white">Error code: <code class="bg-white/10 px-1.5 py-0.5 rounded-md"><%= req.query.err %></code></p>
-                </div>
-              </div>
-            </div>
-            <% } %>
-            
-            <% if (req.query.success) { %>
-            <div class="rounded-xl md:rounded-2xl border border-white/5 p-4 mb-5 bg-green-500/10">
-              <div class="flex">
-                <div class="flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                </div>
-                <div class="ml-3">
-                  <p class="text-sm text-white"><%= req.query.success %></p>
-                </div>
-              </div>
-            </div>
-            <% } %>
-            
             <% if (pterodactyl.root_admin == true) { %>
             <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div class="relative flex flex-col space-y-3 rounded-xl md:rounded-2xl bg-[#162027]/30 shadow border-t border-white/5 px-5 py-4 md:px-6 md:py-5 transition">
@@ -91,21 +61,109 @@
   </div>
   <script>
     async function addResources() {
-      let id2 = encodeURIComponent(document.getElementById("id2").value);
-      let cpu = encodeURIComponent(document.getElementById("cpu").value * 100);
-      let memory = encodeURIComponent(document.getElementById("memory").value * 1024);
-      let storage = encodeURIComponent(document.getElementById("storage").value * 1024);
-      let servers = encodeURIComponent(document.getElementById("servers").value);
-      document.location.href = `/addresources?id=${id2}&cpu=${cpu}&ram=${memory}&disk=${storage}&servers=${servers}`;
-    };
+      const id = document.getElementById("id2").value.trim();
+      const cpu = document.getElementById("cpu").value.trim();
+      const memory = document.getElementById("memory").value.trim();
+      const storage = document.getElementById("storage").value.trim();
+      const servers = document.getElementById("servers").value.trim();
+      
+      // Validate inputs
+      if (!id) {
+        showNotification("Please enter a Discord ID", "error");
+        return;
+      }
+      
+      // Prepare URL parameters
+      let params = new URLSearchParams();
+      params.append('id', id);
+      
+      if (cpu) {
+        if (isNaN(cpu) || parseFloat(cpu) < 0) {
+          showNotification("Please enter a valid CPU value", "error");
+          return;
+        }
+        params.append('cpu', parseFloat(cpu) * 100);
+      }
+      
+      if (memory) {
+        if (isNaN(memory) || parseFloat(memory) < 0) {
+          showNotification("Please enter a valid memory value", "error");
+          return;
+        }
+        params.append('ram', parseFloat(memory) * 1024);
+      }
+      
+      if (storage) {
+        if (isNaN(storage) || parseFloat(storage) < 0) {
+          showNotification("Please enter a valid storage value", "error");
+          return;
+        }
+        params.append('disk', parseFloat(storage) * 1024);
+      }
+      
+      if (servers) {
+        if (isNaN(servers) || parseFloat(servers) < 0) {
+          showNotification("Please enter a valid servers value", "error");
+          return;
+        }
+        params.append('servers', servers);
+      }
+      
+      // Redirect to the resource addition endpoint
+      document.location.href = `/setresources?${params.toString()}`;
+    }
     
     async function removeResources() {
-      let id3 = encodeURIComponent(document.getElementById("id3").value);
-      let cpu2 = encodeURIComponent(document.getElementById("cpu2").value * 100);
-      let memory2 = encodeURIComponent(document.getElementById("memory2").value * 1024);
-      let storage2 = encodeURIComponent(document.getElementById("storage2").value * 1024);
-      let servers2 = encodeURIComponent(document.getElementById("servers2").value);
-      document.location.href = `/removeresources?id=${id3}&cpu=${cpu2}&ram=${memory2}&disk=${storage2}&servers=${servers2}`;
-    };
+      const id = document.getElementById("id3").value.trim();
+      const cpu = document.getElementById("cpu2").value.trim();
+      const memory = document.getElementById("memory2").value.trim();
+      const storage = document.getElementById("storage2").value.trim();
+      const servers = document.getElementById("servers2").value.trim();
+      
+      // Validate inputs
+      if (!id) {
+        showNotification("Please enter a Discord ID", "error");
+        return;
+      }
+      
+      // Prepare URL parameters
+      let params = new URLSearchParams();
+      params.append('id', id);
+      
+      if (cpu) {
+        if (isNaN(cpu) || parseFloat(cpu) < 0) {
+          showNotification("Please enter a valid CPU value", "error");
+          return;
+        }
+        params.append('cpu', -Math.abs(parseFloat(cpu) * 100));
+      }
+      
+      if (memory) {
+        if (isNaN(memory) || parseFloat(memory) < 0) {
+          showNotification("Please enter a valid memory value", "error");
+          return;
+        }
+        params.append('ram', -Math.abs(parseFloat(memory) * 1024));
+      }
+      
+      if (storage) {
+        if (isNaN(storage) || parseFloat(storage) < 0) {
+          showNotification("Please enter a valid storage value", "error");
+          return;
+        }
+        params.append('disk', -Math.abs(parseFloat(storage) * 1024));
+      }
+      
+      if (servers) {
+        if (isNaN(servers) || parseFloat(servers) < 0) {
+          showNotification("Please enter a valid servers value", "error");
+          return;
+        }
+        params.append('servers', -Math.abs(parseFloat(servers)));
+      }
+      
+      // Redirect to the resource addition endpoint with negative values
+      document.location.href = `/setresources?${params.toString()}`;
+    }
   </script>
 </body>

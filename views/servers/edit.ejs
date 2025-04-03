@@ -3,111 +3,302 @@
 <body class="bg-[#10181e]" style="font-family: 'Space Grotesk', sans-serif;">
   <div>
     <%- include('../components/navigation') %>
-    <div class="md:pl-64 flex flex-col flex-1 h-screen"> <%- include('../components/header') %>
-      <main class="flex-1 pb-32">
-        <div class="py-6">
-          <div class="max-w-screen-2xl pt-8 mx-auto px-4 sm:px-6 md:px-16">
+    <div class="md:pl-64 flex flex-col flex-1 min-h-screen"> 
+      <%- include('../components/header') %>
+      <main class="flex-1 pb-8">
+        <div class="py-4 md:py-6">
+          <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 md:px-8">
             
-            <!-- This example requires Tailwind CSS v2.0+ -->
-            <div class="lg:flex lg:items-center lg:justify-between rounded-3xl mb-8">
-              <div class="lg:flex lg:items-center lg:justify-between rounded-3xl mb-8">
-                <div class="min-w-0 flex-1">
-                  <div class="flex">
-                    <div class="relative">
-                      <h2 class="text-xl font-semibold text-white sm:truncate tracking-tight">Edit server</h2>
-                      <p class="text-sm font-normal text-zinc-400">Edit your server's resources.</p>
-                    </div>
-                  </div>
+            <!-- Header Section -->
+            <div class="bg-gradient-to-r from-[#162027]/80 to-[#162027]/30 rounded-xl md:rounded-2xl p-4 md:p-6 mb-4 md:mb-6 border-t border-white/5 shadow-lg">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="mb-3 md:mb-0">
+                  <h2 class="text-lg md:text-xl font-semibold text-white tracking-tight">Edit Server</h2>
+                  <p class="text-xs md:text-sm font-normal text-zinc-400 mt-1">Modify your server's resources and settings.</p>
+                </div>
+                <div class="flex space-x-3">
+                  <a href="/servers" class="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-medium text-white hover:bg-white/10 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+                    </svg>
+                    Back to Servers
+                  </a>
                 </div>
               </div>
             </div>
-            <div class="bg-[#10181e] rounded-lg text-darker text-sm">
-              <%
-                    let ram = 0;
-                    let disk = 0;
-                    let cpu = 0;
-                    let servers = pterodactyl.relationships.servers.data.length;
-                    for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
-                        ram = ram + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0);
-                        disk = disk + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0);
-                        cpu = cpu + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0);
-                    }
-                %>
-              <% if (req.query.id) { %>
+            
+            <%
+              // Calculate used resources across all servers
+              let usedRam = 0;
+              let usedDisk = 0;
+              let usedCpu = 0;
+              let servers = pterodactyl.relationships.servers.data.length;
+              
+              for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
+                  if (pterodactyl.relationships.servers.data[i].attributes.id != req.query.id) {
+                      // Only count resources from other servers
+                      usedRam += (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0);
+                      usedDisk += (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0);
+                      usedCpu += (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0);
+                  }
+              }
+              
+              // Get max resource values from config
+              const maxRamMB = settings.resources?.max_ram || 32768; // Default 32GB
+              const maxDiskMB = settings.resources?.max_disk || 102400; // Default 100GB
+              const maxCpuPercent = settings.resources?.max_cpu || 400; // Default 4 cores
+              
+              // Convert to user-friendly units
+              const maxRamGiB = Math.floor(maxRamMB / 1024);
+              const maxDiskGiB = Math.floor(maxDiskMB / 1024);
+              const maxCpuCores = Math.floor(maxCpuPercent / 100);
+              
+              // Calculate available resources
+              let availableRamMB = Math.max(0, maxRamMB - usedRam);
+              let availableDiskMB = Math.max(0, maxDiskMB - usedDisk);
+              let availableCpuPercent = Math.max(0, maxCpuPercent - usedCpu);
+              
+              // Convert to user-friendly units
+              let availableRamGiB = Math.floor(availableRamMB / 1024);
+              let availableDiskGiB = Math.floor(availableDiskMB / 1024);
+              let availableCpuCores = Math.floor(availableCpuPercent / 100);
+            %>
+            
+            <% if (req.query.id) { %>
               <% if (pterodactyl.relationships.servers.data.filter(name => name.attributes.id == req.query.id).length == 1) {
-                                                    let serverinfo = pterodactyl.relationships.servers.data.filter(name => name.attributes.id == req.query.id)[0];
-                                                    let attemptegg = null;
-                                                    let attemptname = null;
-                                                    for (let [name, value] of Object.entries(settings.api.client.eggs)) {
-                                                        if (settings.api.client.eggs[name].info.egg == serverinfo.attributes.egg) {
-                                                            attemptegg = settings.api.client.eggs[name];
-                                                            attemptname = name;
-                                                        };
-                                                    };
-                                                    let egginfo = attemptegg ? attemptegg.display : "???";
-                                                %>
-              <div class="rounded-3xl">
-                <div class="flex">
-                  <div class="flex-shrink-0">
-
-
+                  let serverinfo = pterodactyl.relationships.servers.data.filter(name => name.attributes.id == req.query.id)[0];
+                  let attemptegg = null;
+                  let attemptname = null;
+                  for (let [name, value] of Object.entries(settings.api.client.eggs)) {
+                      if (settings.api.client.eggs[name].info.egg == serverinfo.attributes.egg) {
+                          attemptegg = settings.api.client.eggs[name];
+                          attemptname = name;
+                      };
+                  };
+                  let egginfo = attemptegg ? attemptegg.display : "???";
+                  
+                  // Current server resources
+                  let currentRam = Math.floor(serverinfo.attributes.limits.memory / 1024);
+                  let currentDisk = Math.floor(serverinfo.attributes.limits.disk / 1024);
+                  let currentCpu = Math.floor(serverinfo.attributes.limits.cpu / 100);
+                  
+                  // Max values are current + available (but not exceeding global max)
+                  let maxRam = Math.min(currentRam + availableRamGiB, maxRamGiB);
+                  let maxDisk = Math.min(currentDisk + availableDiskGiB, maxDiskGiB);
+                  let maxCpu = Math.min(currentCpu + availableCpuCores, maxCpuCores);
+              %>
+              
+              <!-- Server Info Card -->
+              <div class="bg-[#162027]/50 rounded-xl p-4 md:p-6 border-t border-white/5 shadow-lg mb-4 md:mb-6">
+                <div class="flex items-center mb-3 md:mb-4">
+                  <div class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-lg bg-[#0a9875]/20 mr-3 md:mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 md:w-6 md:h-6 text-[#0a9875]">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 0 1-3-3m3 3a3 3 0 1 0 0 6h13.5a3 3 0 1 0 0-6m-16.5-3a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3m-19.5 0a4.5 4.5 0 0 1 .9-2.7L5.737 5.1a3.375 3.375 0 0 1 2.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 0 1 .9 2.7m0 0a3 3 0 0 1-3 3m0 3h.008v.008h-.008v-.008Zm0-6h.008v.008h-.008v-.008Zm-3 6h.008v.008h-.008v-.008Zm0-6h.008v.008h-.008v-.008Z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="text-base md:text-lg font-medium text-white"><%= serverinfo.attributes.name %></h3>
+                    <p class="text-xs md:text-sm text-zinc-400"><%= egginfo %></p>
                   </div>
                 </div>
-                <div class="grid grid-cols-3 gap-6">
-                  <div class="col-span-3 sm:col-span-2">
-                    <label for="company-website" class="block text-white font-medium text-sm">Memory (GiB)</label>
-                    <div class="mt-1 flex">
-                      <input type="text" name="company-website" id="ram" class="mt-3 px-4 py-2 w-full border border-white/5 bg-[#162027]/30 border-none focus:ring-[#0a9875] transition font-medium pl-4 py-3 text-sm text-zinc-400 placeholder:text-zinc-500 tracking-tight rounded-2xl w-96" value="<%= serverinfo.attributes.limits.memory/1024 %>">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+                  <div class="bg-[#10181e]/80 rounded-lg p-3 md:p-4 border border-white/5">
+                    <div class="flex items-center justify-between mb-1.5 md:mb-2">
+                      <span class="text-xs font-medium text-zinc-400">SERVER ID</span>
+                    </div>
+                    <p class="text-xs md:text-sm font-medium text-white truncate"><%= serverinfo.attributes.identifier %></p>
+                  </div>
+                  
+                  <div class="bg-[#10181e]/80 rounded-lg p-3 md:p-4 border border-white/5">
+                    <div class="flex items-center justify-between mb-1.5 md:mb-2">
+                      <span class="text-xs font-medium text-zinc-400">NODE</span>
+                    </div>
+                    <p class="text-xs md:text-sm font-medium text-white"><%= serverinfo.attributes.node %></p>
+                  </div>
+                  
+                  <div class="bg-[#10181e]/80 rounded-lg p-3 md:p-4 border border-white/5 sm:col-span-2 md:col-span-1">
+                    <div class="flex items-center justify-between mb-1.5 md:mb-2">
+                      <span class="text-xs font-medium text-zinc-400">STATUS</span>
+                    </div>
+                    <div class="flex items-center">
+                      <span class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-green-500 mr-1.5 md:mr-2"></span>
+                      <p class="text-xs md:text-sm font-medium text-white">Active</p>
                     </div>
                   </div>
-                </div><br>
-
-                <div class="grid grid-cols-3 gap-6">
-                  <div class="col-span-3 sm:col-span-2">
-                    <label for="company-website" class="block text-white font-medium text-sm">CPU Cores</label>
-                    <div class="mt-1 flex">
-                      <input type="text" name="company-website" id="cpu" class="mt-3 px-4 py-2 w-full border border-white/5 bg-[#162027]/30 border-none focus:ring-[#0a9875] transition font-medium pl-4 py-3 text-sm text-zinc-400 placeholder:text-zinc-500 tracking-tight rounded-2xl w-96" value="<%= serverinfo.attributes.limits.cpu/100 %>">
+                </div>
+              </div>
+              
+              <!-- Resource Allocation Form -->
+              <div class="bg-[#162027]/50 rounded-xl p-4 md:p-6 border-t border-white/5 shadow-lg mb-4 md:mb-6">
+                <h3 class="text-base md:text-lg font-medium text-white mb-3 md:mb-4">Resource Allocation</h3>
+                
+                <div class="space-y-4 md:space-y-5">
+                  <!-- RAM Slider -->
+                  <div class="bg-[#10181e]/50 rounded-lg p-3 md:p-4 border border-white/5">
+                    <div class="flex items-center justify-between mb-2 md:mb-3">
+                      <span class="text-xs md:text-sm font-medium text-white">Memory (RAM)</span>
+                      <span id="ram-value" class="text-xs font-medium text-[#0a9875]"><%= currentRam %> GiB</span>
+                    </div>
+                    <div class="relative">
+                      <input id="ram-slider" type="range" min="1" max="<%= maxRam %>" value="<%= currentRam %>" 
+                             class="w-full h-1.5 bg-[#0a1018] rounded-lg appearance-none cursor-pointer accent-[#0a9875]"
+                             oninput="updateRamValue(this.value)">
+                      <div class="flex justify-between text-xs text-zinc-500 mt-1">
+                        <span>1 GiB</span>
+                        <span><%= maxRam %> GiB</span>
+                      </div>
+                    </div>
+                    <div class="mt-2 md:mt-3">
+                      <div class="flex items-center">
+                        <span class="text-xs text-zinc-400 mr-2">Value:</span>
+                        <input type="number" id="ram" value="<%= currentRam %>" min="1" max="<%= maxRam %>" step="1"
+                               class="w-20 rounded-md border-0 bg-[#0a1018] py-1 px-2 text-white text-center text-xs shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-[#0a9875]"
+                               oninput="updateRamSlider(this.value)">
+                        <span class="text-xs text-zinc-400 ml-2">GiB</span>
+                      </div>
                     </div>
                   </div>
-                </div><br>
-
-                <div class="grid grid-cols-3 gap-6">
-                  <div class="col-span-3 sm:col-span-2">
-                    <label for="company-website" class="block text-white font-medium text-sm">Storage (GiB)</label>
-                    <div class="mt-1 flex">
-                      <input type="text" name="company-website" id="disk" class="mt-3 px-4 py-2 w-full border border-white/5 bg-[#162027]/30 border-none focus:ring-[#0a9875] transition font-medium pl-4 py-3 text-sm text-zinc-400 placeholder:text-zinc-500 tracking-tight rounded-2xl w-96" value="<%= serverinfo.attributes.limits.disk/1024 %>">
+                  
+                  <!-- CPU Slider -->
+                  <div class="bg-[#10181e]/50 rounded-lg p-3 md:p-4 border border-white/5">
+                    <div class="flex items-center justify-between mb-2 md:mb-3">
+                      <span class="text-xs md:text-sm font-medium text-white">CPU Cores</span>
+                      <span id="cpu-value" class="text-xs font-medium text-[#0a9875]"><%= currentCpu %> Cores</span>
+                    </div>
+                    <div class="relative">
+                      <input id="cpu-slider" type="range" min="1" max="<%= maxCpu %>" value="<%= currentCpu %>" 
+                             class="w-full h-1.5 bg-[#0a1018] rounded-lg appearance-none cursor-pointer accent-[#0a9875]"
+                             oninput="updateCpuValue(this.value)">
+                      <div class="flex justify-between text-xs text-zinc-500 mt-1">
+                        <span>1 Core</span>
+                        <span><%= maxCpu %> Cores</span>
+                      </div>
+                    </div>
+                    <div class="mt-2 md:mt-3">
+                      <div class="flex items-center">
+                        <span class="text-xs text-zinc-400 mr-2">Value:</span>
+                        <input type="number" id="cpu" value="<%= currentCpu %>" min="1" max="<%= maxCpu %>" step="1"
+                               class="w-20 rounded-md border-0 bg-[#0a1018] py-1 px-2 text-white text-center text-xs shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-[#0a9875]"
+                               oninput="updateCpuSlider(this.value)">
+                        <span class="text-xs text-zinc-400 ml-2">Cores</span>
+                      </div>
                     </div>
                   </div>
-                </div><br><br>
-                <button onclick="submitForm()" type="button" class="inline-flex  flex-1 items-center rounded-2xl border-none bg-[#0a9875] px-4 py-2.5 text-sm font-medium text-white ring-none focus:outline-none">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mr-2 h-5 inline-flex ">
+                  
+                  <!-- Disk Slider -->
+                  <div class="bg-[#10181e]/50 rounded-lg p-3 md:p-4 border border-white/5">
+                    <div class="flex items-center justify-between mb-2 md:mb-3">
+                      <span class="text-xs md:text-sm font-medium text-white">Storage (Disk)</span>
+                      <span id="disk-value" class="text-xs font-medium text-[#0a9875]"><%= currentDisk %> GiB</span>
+                    </div>
+                    <div class="relative">
+                      <input id="disk-slider" type="range" min="5" max="<%= maxDisk %>" value="<%= currentDisk %>" 
+                             class="w-full h-1.5 bg-[#0a1018] rounded-lg appearance-none cursor-pointer accent-[#0a9875]"
+                             oninput="updateDiskValue(this.value)">
+                      <div class="flex justify-between text-xs text-zinc-500 mt-1">
+                        <span>5 GiB</span>
+                        <span><%= maxDisk %> GiB</span>
+                      </div>
+                    </div>
+                    <div class="mt-2 md:mt-3">
+                      <div class="flex items-center">
+                        <span class="text-xs text-zinc-400 mr-2">Value:</span>
+                        <input type="number" id="disk" value="<%= currentDisk %>" min="5" max="<%= maxDisk %>" step="5"
+                               class="w-20 rounded-md border-0 bg-[#0a1018] py-1 px-2 text-white text-center text-xs shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-[#0a9875]"
+                               oninput="updateDiskSlider(this.value)">
+                        <span class="text-xs text-zinc-400 ml-2">GiB</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Action Buttons -->
+              <div class="flex flex-col sm:flex-row gap-3">
+                <button onclick="submitForm()" type="button" class="flex-1 inline-flex items-center justify-center rounded-xl bg-[#0a9875] px-4 py-2.5 md:px-5 md:py-3 text-xs md:text-sm font-medium text-white shadow-sm hover:bg-[#0cae86] focus:outline-none focus:ring-2 focus:ring-[#0a9875] focus:ring-offset-2 focus:ring-offset-[#10181e] transition-colors duration-200">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mr-1.5 md:mr-2 h-4 w-4 md:h-5 md:w-5">
                     <path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z" />
                     <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z" />
                   </svg>                   
-                  Edit Server
-               </button>
-               <a href="../delete?id=<%= req.query.id %>" type="button" class="ml-2 inline-flex  flex-1 items-center rounded-2xl border-none bg-red-600 px-4 py-2.5 text-sm font-medium text-white ring-none focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mr-2 h-5 inline-flex ">
-                  <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clip-rule="evenodd" />
-                </svg>                             
-                Delete
-              </a>
+                  Save Changes
+                </button>
+                
+                <a href="../delete?id=<%= req.query.id %>" type="button" class="flex-1 inline-flex items-center justify-center rounded-xl bg-red-600/20 border border-red-600/30 px-4 py-2.5 md:px-5 md:py-3 text-xs md:text-sm font-medium text-red-500 hover:bg-red-600/30 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-[#10181e] transition-colors duration-200">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mr-1.5 md:mr-2 h-4 w-4 md:h-5 md:w-5">
+                    <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clip-rule="evenodd" />
+                  </svg>                             
+                  Delete Server
+                </a>
               </div>
+              
               <script>
+                // Slider and input synchronization
+                function updateRamValue(val) {
+                  document.getElementById('ram').value = val;
+                  document.getElementById('ram-value').textContent = val + ' GiB';
+                }
+                
+                function updateRamSlider(val) {
+                  document.getElementById('ram-slider').value = val;
+                  document.getElementById('ram-value').textContent = val + ' GiB';
+                }
+                
+                function updateCpuValue(val) {
+                  document.getElementById('cpu').value = val;
+                  document.getElementById('cpu-value').textContent = val + ' Cores';
+                }
+                
+                function updateCpuSlider(val) {
+                  document.getElementById('cpu-slider').value = val;
+                  document.getElementById('cpu-value').textContent = val + ' Cores';
+                }
+                
+                function updateDiskValue(val) {
+                  document.getElementById('disk').value = val;
+                  document.getElementById('disk-value').textContent = val + ' GiB';
+                }
+                
+                function updateDiskSlider(val) {
+                  document.getElementById('disk-slider').value = val;
+                  document.getElementById('disk-value').textContent = val + ' GiB';
+                }
+                
+                // Form submission
                 async function submitForm() {
                   let ram = encodeURIComponent(document.getElementById("ram").value);
                   let disk = encodeURIComponent(document.getElementById("disk").value);
                   let cpu = encodeURIComponent(document.getElementById("cpu").value);
                   document.location.href = `/modify?id=<%= req.query.id %>&ram=${ram*1024}&disk=${disk*1024}&cpu=${cpu*100}`;
-                };
+                }
               </script>
-              <% } else { %>
-              <p class="text-gray-600">Could not find server with the provided ID.</p>
-              <% } %>
-              <% } else { %>
-              <p class="text-gray-600">Missing server ID.</p>
-              <% } %>
+              
+            <% } else { %>
+              <div class="bg-[#162027]/50 rounded-xl p-4 md:p-6 border-t border-white/5 shadow-lg text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 md:w-12 md:h-12 mx-auto text-zinc-500 mb-2 md:mb-3">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                </svg>
+                <h3 class="text-base md:text-lg font-medium text-white mb-1 md:mb-2">Server Not Found</h3>
+                <p class="text-xs md:text-sm text-zinc-400 mb-3 md:mb-4">Could not find server with the provided ID.</p>
+                <a href="/servers" class="inline-flex items-center justify-center rounded-xl bg-[#0a9875] px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-medium text-white shadow-sm hover:bg-[#0cae86] focus:outline-none focus:ring-2 focus:ring-[#0a9875] focus:ring-offset-2 focus:ring-offset-[#10181e] transition-colors duration-200">
+                  Return to Servers
+                </a>
+              </div>
+            <% } %>
+            
+          <% } else { %>
+            <div class="bg-[#162027]/50 rounded-xl p-4 md:p-6 border-t border-white/5 shadow-lg text-center">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 md:w-12 md:h-12 mx-auto text-zinc-500 mb-2 md:mb-3">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+              </svg>
+              <h3 class="text-base md:text-lg font-medium text-white mb-1 md:mb-2">Missing Server ID</h3>
+              <p class="text-xs md:text-sm text-zinc-400 mb-3 md:mb-4">No server ID was provided in the request.</p>
+              <a href="/servers" class="inline-flex items-center justify-center rounded-xl bg-[#0a9875] px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-medium text-white shadow-sm hover:bg-[#0cae86] focus:outline-none focus:ring-2 focus:ring-[#0a9875] focus:ring-offset-2 focus:ring-offset-[#10181e] transition-colors duration-200">
+                Return to Servers
+              </a>
             </div>
+          <% } %>
+            
           </div>
         </div>
       </main>

@@ -11,7 +11,7 @@ version = "11.0.0"
 # Additional settings
 testing = false
 clusters = 1
-database = "sqlite://Aerodactyl.db"
+database = "sqlite://AeroDactyl.db"
 
 # Pterodactyl settings
 [pterodactyl]
@@ -65,7 +65,7 @@ accountSwitcher = true
 
   [api.client.passwordgenerator]
   signup = true
-  note = "Use this to disable registering on Heliactyl."
+  note = "Use this to disable registering on AeroDactyl."
   length = 24
 
   [api.client.allow]
@@ -79,7 +79,7 @@ accountSwitcher = true
     delete = true
 
   [api.client.oauth2]
-  _comment = "Go to https://discord.dev/ and create an application to set up OAuth2. This is required for Heliactyl to work. You must also set the redirect URL to the link below."
+  _comment = "Go to https://discord.dev/ and create an application to set up OAuth2. This is required for AeroDactyl to work. You must also set the redirect URL to the link below."
   id = "your bot id"
   secret = "your bot secret"
   link = "https://example.com"
@@ -308,18 +308,18 @@ coins = 150
 userid = "000000"
 
 [antivpn]
-note = "For this to work, generate an API Key on https://proxycheck.io/. If you do not put a key, Heliactyl will automatically disable anti-VPN."
+note = "For this to work, generate an API Key on https://proxycheck.io/. If you do not put a key, AeroDactyl will automatically disable anti-VPN."
 status = false
 APIKey = "Proxycheck API Key"
 whitelistedIPs = [ "IP address" ]
 
 [whitelist]
-note = "This allows only specific people to be able to login to the Heliactyl dashboard. This does not affect your Panel."
+note = "This allows only specific people to be able to login to the AeroDactyl dashboard. This does not affect your Panel."
 status = false
 users = [ "User ID" ]
 
 [logging]
-_note = "This is the 2nd-generation version of Heliactyl's logging system. Please report any bugs on the GitHub (github.com/heliactyloss/heliactyl). Thank you."
+_note = "This is the 2nd-generation version of AeroDactyl's logging system. Please report any bugs on the GitHub (github.com/AeroDactyl/AeroDactyl). Thank you."
 status = true
 webhook = ""
 

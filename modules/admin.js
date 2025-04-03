@@ -127,26 +127,38 @@ module.exports.load = async function (app, db) {
     if (!coins) return res.redirect(failredirect + "?err=MISSINGCOINS");
 
     let currentcoins = (await db.get("coins-" + id)) || 0;
-
-    coins = currentcoins + parseFloat(coins);
+    coins = parseFloat(coins);
 
     if (isNaN(coins))
       return res.redirect(failredirect + "?err=INVALIDCOINNUMBER");
 
-    if (coins < 0 || coins > 999999999999999)
+    // Calculate new coin balance
+    let newCoins = currentcoins + coins;
+
+    if (newCoins < 0 || newCoins > 999999999999999)
       return res.redirect(`${failredirect}?err=COINSIZE`);
 
-    if (coins == 0) {
+    if (newCoins == 0) {
       await db.delete("coins-" + id);
     } else {
-      await db.set("coins-" + id, coins);
+      await db.set("coins-" + id, newCoins);
     }
 
     let successredirect = theme.settings.redirect.setcoins || "/";
-    log(
-      `add coins`,
-      `${req.session.userinfo.username} added \`${req.query.coins}\` coins to the user with the ID \`${id}\`'s account.`
-    );
+    
+    // Log the appropriate action based on whether we're adding or removing coins
+    if (coins > 0) {
+      log(
+        `add coins`,
+        `${req.session.userinfo.username} added \`${coins}\` coins to the user with the ID \`${id}\`'s account.`
+      );
+    } else {
+      log(
+        `remove coins`,
+        `${req.session.userinfo.username} removed \`${Math.abs(coins)}\` coins from the user with the ID \`${id}\`'s account.`
+      );
+    }
+    
     res.redirect(successredirect + "?err=none");
   });
 
@@ -208,34 +220,38 @@ module.exports.load = async function (app, db) {
 
       if (ramstring) {
         let ram = parseFloat(ramstring);
-        if (ram < 0 || ram > 999999999999999) {
+        let newRam = extra.ram + ram;
+        if (newRam < 0 || newRam > 999999999999999) {
           return res.redirect(`${failredirect}?err=RAMSIZE`);
         }
-        extra.ram = ram;
+        extra.ram = newRam;
       }
 
       if (diskstring) {
         let disk = parseFloat(diskstring);
-        if (disk < 0 || disk > 999999999999999) {
+        let newDisk = extra.disk + disk;
+        if (newDisk < 0 || newDisk > 999999999999999) {
           return res.redirect(`${failredirect}?err=DISKSIZE`);
         }
-        extra.disk = disk;
+        extra.disk = newDisk;
       }
 
       if (cpustring) {
         let cpu = parseFloat(cpustring);
-        if (cpu < 0 || cpu > 999999999999999) {
+        let newCpu = extra.cpu + cpu;
+        if (newCpu < 0 || newCpu > 999999999999999) {
           return res.redirect(`${failredirect}?err=CPUSIZE`);
         }
-        extra.cpu = cpu;
+        extra.cpu = newCpu;
       }
 
       if (serversstring) {
         let servers = parseFloat(serversstring);
-        if (servers < 0 || servers > 999999999999999) {
+        let newServers = extra.servers + servers;
+        if (newServers < 0 || newServers > 999999999999999) {
           return res.redirect(`${failredirect}?err=SERVERSIZE`);
         }
-        extra.servers = servers;
+        extra.servers = newServers;
       }
 
       if (
@@ -249,15 +265,40 @@ module.exports.load = async function (app, db) {
         await db.set("extra-" + req.query.id, extra);
       }
 
-      adminjs.suspend(req.query.id);
-
-      log(
-        `set resources`,
-        `${req.session.userinfo.username} set the resources of the user with the ID \`${id}\` to:\`\`\`servers: ${serversstring}\nCPU: ${cpustring}%\nMemory: ${ramstring} MB\nDisk: ${diskstring} MB\`\`\``
-      );
+      // Log the appropriate action based on the operation
+      const operation = (ramstring && parseFloat(ramstring) > 0) || 
+                       (diskstring && parseFloat(diskstring) > 0) || 
+                       (cpustring && parseFloat(cpustring) > 0) || 
+                       (serversstring && parseFloat(serversstring) > 0) 
+                       ? "added" : "removed";
+      
+      let logMessage = `${req.session.userinfo.username} ${operation} resources for user with ID \`${id}\`.`;
+      
+      if (ramstring) {
+        const ramValue = Math.abs(parseFloat(ramstring));
+        logMessage += ` RAM: ${ramValue / 1024} GiB ${parseFloat(ramstring) > 0 ? 'added' : 'removed'}.`;
+      }
+      
+      if (diskstring) {
+        const diskValue = Math.abs(parseFloat(diskstring));
+        logMessage += ` Disk: ${diskValue / 1024} GiB ${parseFloat(diskstring) > 0 ? 'added' : 'removed'}.`;
+      }
+      
+      if (cpustring) {
+        const cpuValue = Math.abs(parseFloat(cpustring));
+        logMessage += ` CPU: ${cpuValue / 100} cores ${parseFloat(cpustring) > 0 ? 'added' : 'removed'}.`;
+      }
+      
+      if (serversstring) {
+        const serversValue = Math.abs(parseFloat(serversstring));
+        logMessage += ` Servers: ${serversValue} ${parseFloat(serversstring) > 0 ? 'added' : 'removed'}.`;
+      }
+      
+      log(`resource ${operation}`, logMessage);
+      
       return res.redirect(successredirect + "?err=none");
     } else {
-      res.redirect(`${failredirect}?err=MISSINGVARIABLES`);
+      return res.redirect(`${failredirect}?err=MISSING_RESOURCES`);
     }
   });
 

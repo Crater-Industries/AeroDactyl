@@ -13,7 +13,7 @@ Aerodactyl is a user-friendly dashboard designed for seamless server management 
 
 # Install Guide
 
-## 1. Configuring XaloraClient
+## 1. Configuring AeroDactyl
 
 ### Pterodactyl method (easiest)
 
@@ -32,14 +32,14 @@ Warning: You need Pterodactyl already set up on a domain for this method to work
 - `nvm install 16`
 - check the node version with `node -v` and switch between versions with `nvm use <version>`
 
-<strong>1.2</strong> Download XaloraClient files in /var/www/XaloraClient :
+<strong>1.2</strong> Download AeroDactyl files in /var/www/AeroDactyl :
 
-- `git clone https://github.com/XaloraLabs/XaloraClient.git /var/www/XaloraClient`
+- `git clone https://github.com/Crater-Industries/AeroDactyl.git /var/www/AeroDactyl`
 
 <strong>1.3</strong> Installing required node modules (and build dependencies to avoid errors) :
 
 - `apt-get update && apt-get install libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev build-essential`
-- `cd /var/www/XaloraClient && npm i`
+- `cd /var/www/AeroDactyl && npm i`
 
 After configuring settings.json, to start the server, use `node index.js`</br>
 To run in the background, use PM2 (see PM2 section)</br>
@@ -56,9 +56,9 @@ To run in the background, use PM2 (see PM2 section)</br>
 
 <strong>2.5</strong> Run `ufw allow 80` and `ufw allow 443` on the vps
 
-<strong>2.6</strong> Run `certbot certonly -d <Your XaloraClient Domain>` then do 1 and put your email
+<strong>2.6</strong> Run `certbot certonly -d <Your AeroDactyl Domain>` then do 1 and put your email
 
-<strong>2.7</strong> Run `nano /etc/nginx/sites-enabled/XaloraClient.conf`
+<strong>2.7</strong> Run `nano /etc/nginx/sites-enabled/AeroDactyl.conf`
 
 <strong>2.8</strong> Paste the configuration at the bottom of this and replace with the IP of the pterodactyl server including the port and with the domain you want your dashboard to be hosted on.
 

@@ -23,7 +23,7 @@
             </button>
           </div>
 
-          <% if (req.query.err && req.query.err == "CREATED") { %>
+          <% if (req.query.success && req.query.success == "CREATED") { %>
           <div class="rounded-xl bg-[#162027]/50 shadow border-t border-white/5 p-4 md:p-5 mb-6 flex items-start">
             <div class="flex-shrink-0 mt-0.5">
               <div class="bg-[#0a9875]/10 p-2 rounded-lg">
@@ -41,7 +41,7 @@
           </div>
           <% } %>
           
-          <% if (req.query.err && req.query.err == "MODIFIED") { %>
+          <% if (req.query.success && req.query.success == "MODIFIED") { %>
           <div class="rounded-xl bg-[#162027]/50 shadow border-t border-white/5 p-4 md:p-5 mb-6 flex items-start">
             <div class="flex-shrink-0 mt-0.5">
               <div class="bg-[#0a9875]/10 p-2 rounded-lg">

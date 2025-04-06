@@ -9,7 +9,7 @@ Aerodactyl is a user-friendly dashboard designed for seamless server management 
 - **Pterodactyl Integration**: Full integration with Pterodactyl for backend server management.
 - **Economy**: Features include server balance management, transfers, earning through tasks, Linkvertise integration, and a virtual store for in-dashboard purchases.
 
-⚠️ **This dashboard is still in development and may not work as expected.**
+⚠️ **This dashboard is still in development and may not work as expected.*
 
 # Install Guide
 

@@ -36,7 +36,20 @@ const heliactylModule = { "name": "Discord OAuth2", "target_platform": "10.0.0" 
 module.exports.heliactylModule = heliactylModule;
 module.exports.load = async function (app, db) {
     app.get("/login", async (req, res) => {
+      // If provider is specified as Google, redirect to Google auth
+      if (req.query.provider === "google") {
+        return res.redirect("/auth/google");
+      }
+      
+      // Store redirect for Discord auth
       if (req.query.redirect) req.session.redirect = "/" + req.query.redirect;
+      
+      // If previously authenticated with Google, redirect to Google auth again
+      if (req.session.authProvider === "google") {
+        return res.redirect("/auth/google");
+      }
+      
+      // Default to Discord auth
       res.redirect(
         `https://discord.com/api/oauth2/authorize?client_id=${
           settings.api.client.oauth2.id

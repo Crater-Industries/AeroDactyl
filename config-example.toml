@@ -86,6 +86,14 @@ accountSwitcher = true
   callbackpath = "/callback"
   prompt = true
 
+    [api.client.google]
+    enabled = true
+    clientId = "your client id"
+    clientSecret = "your client secret"
+    callback = "/auth/google/callback"
+    # Optional JWT support
+    jwtSecret = "your jwt secret"
+
     [api.client.oauth2.ip]
     "trust x-forwarded-for" = true
     block = [ ]

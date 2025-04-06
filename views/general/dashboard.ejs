@@ -16,7 +16,13 @@
             <div class="bg-gradient-to-r from-[#162027]/80 to-[#162027]/30 rounded-xl md:rounded-2xl p-4 md:p-6 mb-4 md:mb-6 border-t border-white/5 shadow-lg">
               <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div class="mb-3 md:mb-0">
-                  <h2 class="text-lg md:text-xl font-semibold text-white tracking-tight"><%= req.session.userinfo.global_name %>, welcome back! 👋</h2>
+                  <h2 class="text-lg md:text-xl font-semibold text-white tracking-tight">
+                    <% if(req.session.authProvider === 'google') { %>
+                      <%= req.session.userinfo.username %>, welcome back! 👋
+                    <% } else { %>
+                      <%= req.session.userinfo.global_name || req.session.userinfo.username %>, welcome back! 👋
+                    <% } %>
+                  </h2>
                   <p class="text-xs md:text-sm font-normal text-zinc-400 mt-1">View general information related to your resource quota, account and servers.</p>
                 </div>
                 <a href="../panel" class="inline-flex items-center rounded-full bg-[#0a9875] px-4 md:px-5 py-1.5 md:py-2 text-xs md:text-sm font-medium text-white shadow-sm hover:bg-[#0cae86] focus:outline-none focus:ring-2 focus:ring-[#0a9875] focus:ring-offset-2 focus:ring-offset-[#162027] transition-all duration-200">

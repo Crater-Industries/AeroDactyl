@@ -5,11 +5,11 @@
 <% } %>
 
 <body class="min-h-screen bg-[#0a1118] flex items-center justify-center p-4 md:p-8" style="font-family: 'Space Grotesk'">
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-4 py-4">
       
-        <div class="flex justify-start mb-8 md:mb-12">
-            <div class="flex items-center gap-3 max-w-5xl mx-auto w-full pl-0 md:pl-0">
-             
+        <!-- Reduce space below heading to just 16px (4 in Tailwind) -->
+        <div class="flex justify-start mb-4 sticky top-0 z-10 bg-[#0a1118] py-2">
+            <div class="flex items-center gap-3 max-w-5xl mx-auto w-full pl-0 md:ml-8 lg:ml-12">
                 <div class="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center">
                     <img src="<%= settings.homepage_logo || settings.logo %>" alt="<%= settings.name %> Logo" class="h-full w-auto object-contain">
                 </div>
@@ -17,43 +17,34 @@
             </div>
         </div>
         
- 
         <div class="max-w-5xl mx-auto flex flex-col md:flex-row gap-6 md:gap-8 justify-center items-center">
         
-            <div class="w-full md:w-2/5 bg-[#151f28]/80 backdrop-blur-sm border border-white/10 rounded-xl md:rounded-2xl p-6 md:p-8 flex flex-col h-auto md:h-[450px] shadow-xl shadow-black/20">
-                <div class="mb-4 md:mb-6">
-                    <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">👋 Welcome Back</h2>
-                    <p class="text-zinc-400 text-sm md:text-base">Sign in to continue to your dashboard</p>
+            <div class="w-full md:w-2/5 md:ml-8 lg:ml-12 bg-[#151f28]/80 backdrop-blur-sm border border-white/10 rounded-xl md:rounded-2xl p-5 md:p-6 flex flex-col shadow-xl shadow-black/20">
+                <div class="mb-5 md:mb-6">
+                    <h2 class="text-2xl md:text-3xl font-bold text-white mb-1">👋 Welcome Back</h2>
+                    <p class="text-zinc-400 text-sm">Sign in to continue to your dashboard</p>
                 </div>
                 
-                <div class="mb-4 md:mb-4">
-                    <h3 class="text-lg font-bold text-white mb-2">Seamless Experience</h3>
-                    <p class="text-zinc-400 text-sm mb-3 md:mb-4">Login to your <%= settings.name %> account through Discord OAuth2. New users will have an account created automatically.</p>
-                    
-                    <div class="flex flex-wrap gap-2 mb-3 md:mb-4">
-                        <div class="bg-[#1c2732]/70 px-3 py-1.5 md:px-4 md:py-2 rounded-lg border border-white/5">
-                            <p class="text-white text-xs font-medium">🔒 Secure</p>
-                        </div>
-                        <div class="bg-[#1c2732]/70 px-3 py-1.5 md:px-4 md:py-2 rounded-lg border border-white/5">
-                            <p class="text-white text-xs font-medium">⚡ Instant</p>
-                        </div>
-                        <div class="bg-[#1c2732]/70 px-3 py-1.5 md:px-4 md:py-2 rounded-lg border border-white/5">
-                            <p class="text-white text-xs font-medium">🛠️ Control</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="flex-grow flex flex-col justify-center py-4 md:py-0">
-                   
-                    <a href="#" id="login-button" class="w-full max-w-md mx-auto py-3 px-5 bg-[#0a9875] hover:bg-[#0cae86] rounded-xl transition-all duration-200 flex items-center justify-center gap-3 shadow-lg shadow-[#0a9875]/20 transform hover:translate-y-[-1px]">
+                <div class="flex flex-col justify-center py-3 md:py-4">
+                    <a href="#" id="login-button" class="w-full max-w-md mx-auto mb-3 py-3 px-5 bg-[#0a9875] hover:bg-[#0cae86] rounded-xl transition-all duration-200 flex items-center justify-center gap-3 shadow-lg shadow-[#0a9875]/20 transform hover:translate-y-[-1px]">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 127.14 96.36" fill="white" class="flex-shrink-0">
                             <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
                         </svg>
                         <span class="font-medium text-white text-base">Continue with Discord</span>
                     </a>
+                    
+                    <a href="#" id="google-login-button" class="w-full max-w-md mx-auto py-3 px-5 bg-white hover:bg-gray-100 rounded-xl transition-all duration-200 flex items-center justify-center gap-3 shadow-lg shadow-black/10 transform hover:translate-y-[-1px]">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="flex-shrink-0">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        <span class="font-medium text-gray-800 text-base">Continue with Google</span>
+                    </a>
                 </div>
                 
-                <div class="mt-4 md:mt-auto text-center">
+                <div class="mt-3 mb-1 text-center">
                     <span class="text-xs text-zinc-400">
                         Need assistance? Join our 
                         <a href="<%= settings.website.discord %>" class="text-[#0cae86] hover:text-[#0dd196] hover:underline transition-colors">Discord Server</a>
@@ -62,7 +53,7 @@
             </div>
             
         
-            <div class="w-full md:w-3/5 h-[300px] md:h-[450px] mt-6 md:mt-0 flex items-center justify-center ">
+            <div class="w-full md:w-1/2 md:mr-8 lg:mr-12 h-[270px] md:h-[400px] mt-6 md:mt-0 flex items-center justify-center">
                 <div class="relative h-full w-full flex items-center justify-center">
                     <img src="../assets/loginimg.webp" alt="Login Image" class="w-full h-full object-contain rounded-xl" />
                 </div>
@@ -135,7 +126,7 @@
     </div>
 
     <script>
-        // Check for maintenance mode when login button is clicked
+        // Check for maintenance mode when login buttons are clicked
         document.getElementById('login-button').addEventListener('click', async function(e) {
             e.preventDefault();
             
@@ -162,6 +153,36 @@
                 console.error('Error checking maintenance status:', error);
                 // If there's an error, proceed with login anyway
                 window.location.href = '../login';
+            }
+        });
+        
+        // Google login button - direct route to Google auth
+        document.getElementById('google-login-button').addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const response = await fetch('/api/maintenance/status');
+                const data = await response.json();
+                
+                if (data.maintenance) {
+                    // If maintenance mode is enabled, show the maintenance modal
+                    const modal = document.getElementById('maintenance-modal');
+                    const message = document.getElementById('maintenance-message');
+                    
+                    // Set the maintenance message
+                    message.textContent = data.message || "We're currently performing scheduled maintenance. Please check back later.";
+                    
+                    // Show the modal with animation
+                    modal.classList.remove('hidden');
+                    modal.classList.add('animate-fade-in');
+                } else {
+                    // Directly go to Google auth - bypass /login route completely
+                    window.location.href = '/auth/google';
+                }
+            } catch (error) {
+                console.error('Error checking maintenance status:', error);
+                // If there's an error, proceed with login anyway
+                window.location.href = '/auth/google';
             }
         });
         

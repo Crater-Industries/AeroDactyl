@@ -41,7 +41,7 @@ Warning: You need Pterodactyl already set up on a domain for this method to work
 - `apt-get update && apt-get install libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev build-essential`
 - `cd /var/www/AeroDactyl && npm i`
 
-After configuring settings.json, to start the server, use `node index.js`</br>
+After configuring settings.json, to start the server, use `node app.js`</br>
 To run in the background, use PM2 (see PM2 section)</br>
 
 ## 2. Setting up webserver
@@ -63,3 +63,21 @@ To run in the background, use PM2 (see PM2 section)</br>
 <strong>2.8</strong> Paste the configuration at the bottom of this and replace with the IP of the pterodactyl server including the port and with the domain you want your dashboard to be hosted on.
 
 <strong>2.9</strong> Run `systemctl restart nginx` and try open your domain.
+
+# Running in background and on startup
+Installing [pm2](https://github.com/Unitech/pm2):
+- Run `npm install pm2 -g` on the vps
+
+Starting the Dashboard in Background:
+- Change directory to your AeroDactyl folder Using `cd` command, Example: `cd /var/www/AeroDactyl` 
+- To run AeroDactyl, use `pm2 start app.js --name "AeroDactyl"`
+- To view logs, run `pm2 logs AeroDactyl`
+
+Making the dashboard runs on startup:
+- Make sure your dashboard is running in the background with the help of [pm2](https://github.com/Unitech/pm2)
+- You can check if AeroDactyl is running in background with `pm2 list`
+- Once you confirmed that AeroDactyl is running in background, you can create a startup script by running `pm2 startup` and `pm2 save`
+- Note: Supported init systems are `systemd`, `upstart`, `launchd`, `rc.d`
+- To stop your AeroDactyl from running in the background, use `pm2 unstartup`
+
+To stop a currently running AeroDactyl instance, use `pm2 stop AeroDactyl`

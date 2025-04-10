@@ -81,3 +81,39 @@ Making the dashboard runs on startup:
 - To stop your AeroDactyl from running in the background, use `pm2 unstartup`
 
 To stop a currently running AeroDactyl instance, use `pm2 stop AeroDactyl`
+
+# Credits
+<strong>1.1</strong> All our work is made by the XaloraLabs Inc. Team. Thanks to everyone
+
+# Nginx Proxy Config
+
+```Nginx
+server {
+    listen 80;
+    server_name <domain>;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name <domain>;
+
+    ssl_certificate /etc/letsencrypt/live/<domain>/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/<domain>/privkey.pem;
+    ssl_session_cache shared:SSL:10m;
+    ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers  HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+
+    location /afk/ws {
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_pass http://localhost:<port>/afk/ws;
+    }
+    location / {
+        proxy_pass http://localhost:<port>/;
+        proxy_buffering off;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}

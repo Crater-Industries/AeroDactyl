@@ -86,7 +86,7 @@ module.exports.load = async function (app, db) {
       `set coins`,
       `${req.session.userinfo.username} set the coins of the user with the ID \`${id}\` to \`${coins}\`.`
     );
-    res.redirect(successredirect + "?err=none");
+    res.redirect(successredirect + "?success=COINS_SET");
   });
 
   app.get("/addcoins", async (req, res) => {
@@ -152,14 +152,14 @@ module.exports.load = async function (app, db) {
         `add coins`,
         `${req.session.userinfo.username} added \`${coins}\` coins to the user with the ID \`${id}\`'s account.`
       );
+      res.redirect(successredirect + "?success=COINS_ADDED");
     } else {
       log(
         `remove coins`,
         `${req.session.userinfo.username} removed \`${Math.abs(coins)}\` coins from the user with the ID \`${id}\`'s account.`
       );
+      res.redirect(successredirect + "?success=COINS_REMOVED");
     }
-    
-    res.redirect(successredirect + "?err=none");
   });
 
   app.get("/setresources", async (req, res) => {
@@ -296,7 +296,7 @@ module.exports.load = async function (app, db) {
       
       log(`resource ${operation}`, logMessage);
       
-      return res.redirect(successredirect + "?err=none");
+      return res.redirect(successredirect + "?success=RESOURCES_MODIFIED");
     } else {
       return res.redirect(`${failredirect}?err=MISSING_RESOURCES`);
     }
@@ -405,7 +405,7 @@ module.exports.load = async function (app, db) {
       }
 
       adminjs.suspend(req.query.id);
-      return res.redirect(successredirect + "?err=none");
+      return res.redirect(successredirect + "?success=MODIFIED");
     } else {
       res.redirect(`${failredirect}?err=MISSINGVARIABLES`);
     }
@@ -454,7 +454,7 @@ module.exports.load = async function (app, db) {
         `set plan`,
         `${req.session.userinfo.username} removed the plan of the user with the ID \`${req.query.id}\`.`
       );
-      return res.redirect(successredirect + "?err=none");
+      return res.redirect(successredirect + "?success=PLAN_MODIFIED");
     } else {
       if (!settings.api.client.client.packages.list[req.query.package])
         return res.redirect(`${failredirect}?err=INVALIDPACKAGE`);
@@ -465,7 +465,7 @@ module.exports.load = async function (app, db) {
         `set plan`,
         `${req.session.userinfo.username} set the plan of the user with the ID \`${req.query.id}\` to \`${req.query.package}\`.`
       );
-      return res.redirect(successredirect + "?err=none");
+      return res.redirect(successredirect + "?success=PLAN_MODIFIED");
     }
   });
 

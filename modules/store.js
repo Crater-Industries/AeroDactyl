@@ -46,6 +46,25 @@ module.exports.load = async function (app, db) {
     }
   }
 
+  // Helper function to check resource limits
+  async function checkResourceLimits(userId, type, amount, db) {
+    const currentExtra = (await db.get(`extra-${userId}`)) || {
+      ram: 0,
+      disk: 0,
+      cpu: 0,
+      servers: 0,
+    };
+
+    const { per } = settings.api.client.coins.store[type];
+    const additionalAmount = per * amount;
+    const newTotal = currentExtra[type] + additionalAmount;
+
+    // Get maximum allowed from config
+    const maxAllowed = settings.resources[type];
+
+    return newTotal <= maxAllowed;
+  }
+
   // Package purchase endpoint
   app.get("/buy-package", async (req, res) => {
     if (!req.session.pterodactyl) return res.redirect("/login");
@@ -63,8 +82,19 @@ module.exports.load = async function (app, db) {
     const theme = indexjs.get(req);
     const failedCallbackPath = theme.settings.redirect.failedpurchaseram || "/";
 
+    // Check resource limits for each resource type
+    const userId = req.session.userinfo.id;
+    for (const [type, amount] of Object.entries(pkg.resources)) {
+      if (amount > 0) {
+        const withinLimits = await checkResourceLimits(userId, type, amount, db);
+        if (!withinLimits) {
+          return res.redirect(`${failedCallbackPath}?err=RESOURCELIMIT`);
+        }
+      }
+    }
+
     // Check if user can afford the package
-    const userCoins = (await db.get(`coins-${req.session.userinfo.id}`)) || 0;
+    const userCoins = (await db.get(`coins-${userId}`)) || 0;
     if (userCoins < pkg.cost) {
       return res.redirect(`${failedCallbackPath}?err=CANNOTAFFORD`);
     }
@@ -72,14 +102,14 @@ module.exports.load = async function (app, db) {
     // Deduct coins
     const newUserCoins = userCoins - pkg.cost;
     if (newUserCoins === 0) {
-      await db.delete(`coins-${req.session.userinfo.id}`);
+      await db.delete(`coins-${userId}`);
     } else {
-      await db.set(`coins-${req.session.userinfo.id}`, newUserCoins);
+      await db.set(`coins-${userId}`, newUserCoins);
     }
 
     // Add resources
     const resources = pkg.resources;
-    let extra = (await db.get(`extra-${req.session.userinfo.id}`)) || {
+    let extra = (await db.get(`extra-${userId}`)) || {
       ram: 0,
       disk: 0,
       cpu: 0,
@@ -90,9 +120,9 @@ module.exports.load = async function (app, db) {
     for (const [type, amount] of Object.entries(resources)) {
       if (amount > 0) {
         // Update resource cap
-        const resourceCap = (await db.get(`${type}-${req.session.userinfo.id}`)) || 0;
+        const resourceCap = (await db.get(`${type}-${userId}`)) || 0;
         const newResourceCap = resourceCap + amount;
-        await db.set(`${type}-${req.session.userinfo.id}`, newResourceCap);
+        await db.set(`${type}-${userId}`, newResourceCap);
 
         // Update extra resources
         const { per } = settings.api.client.coins.store[type];
@@ -102,13 +132,13 @@ module.exports.load = async function (app, db) {
 
     // Save extra resources
     if (Object.values(extra).every((v) => v === 0)) {
-      await db.delete(`extra-${req.session.userinfo.id}`);
+      await db.delete(`extra-${userId}`);
     } else {
-      await db.set(`extra-${req.session.userinfo.id}`, extra);
+      await db.set(`extra-${userId}`, extra);
     }
 
     // Suspend to apply changes
-    adminjs.suspend(req.session.userinfo.id);
+    adminjs.suspend(userId);
 
     // Log the purchase
     log(
@@ -145,9 +175,16 @@ module.exports.load = async function (app, db) {
     const failedCallbackPath =
       theme.settings.redirect[`failedpurchase${type}`] || "/";
 
-    const userCoins = (await db.get(`coins-${req.session.userinfo.id}`)) || 0;
-    const resourceCap =
-      (await db.get(`${type}-${req.session.userinfo.id}`)) || 0;
+    const userId = req.session.userinfo.id;
+
+    // Check resource limits
+    const withinLimits = await checkResourceLimits(userId, type, parsedAmount, db);
+    if (!withinLimits) {
+      return res.redirect(`${failedCallbackPath}?err=RESOURCELIMIT`);
+    }
+
+    const userCoins = (await db.get(`coins-${userId}`)) || 0;
+    const resourceCap = (await db.get(`${type}-${userId}`)) || 0;
 
     const { per, cost } = settings.api.client.coins.store[type];
     const purchaseCost = cost * parsedAmount;
@@ -160,14 +197,14 @@ module.exports.load = async function (app, db) {
     const extraResource = per * parsedAmount;
 
     if (newUserCoins === 0) {
-      await db.delete(`coins-${req.session.userinfo.id}`);
-      await db.set(`${type}-${req.session.userinfo.id}`, newResourceCap);
+      await db.delete(`coins-${userId}`);
+      await db.set(`${type}-${userId}`, newResourceCap);
     } else {
-      await db.set(`coins-${req.session.userinfo.id}`, newUserCoins);
-      await db.set(`${type}-${req.session.userinfo.id}`, newResourceCap);
+      await db.set(`coins-${userId}`, newUserCoins);
+      await db.set(`${type}-${userId}`, newResourceCap);
     }
 
-    let extra = (await db.get(`extra-${req.session.userinfo.id}`)) || {
+    let extra = (await db.get(`extra-${userId}`)) || {
       ram: 0,
       disk: 0,
       cpu: 0,
@@ -177,12 +214,12 @@ module.exports.load = async function (app, db) {
     extra[type] += extraResource;
 
     if (Object.values(extra).every((v) => v === 0)) {
-      await db.delete(`extra-${req.session.userinfo.id}`);
+      await db.delete(`extra-${userId}`);
     } else {
-      await db.set(`extra-${req.session.userinfo.id}`, extra);
+      await db.set(`extra-${userId}`, extra);
     }
 
-    adminjs.suspend(req.session.userinfo.id);
+    adminjs.suspend(userId);
 
     log(
       `Resources Purchased`,
@@ -237,6 +274,32 @@ module.exports.load = async function (app, db) {
         const nextClaimIn = DAY_IN_MILLISECONDS - timePassed;
         return res.json({ claimable: false, nextClaimIn });
     }
+  });
+
+  // Add resource limits check endpoint
+  app.get('/check-resource-limits', async (req, res) => {
+    if (!req.session.pterodactyl) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const userId = req.session.userinfo.id;
+    const currentExtra = (await db.get(`extra-${userId}`)) || {
+      ram: 0,
+      disk: 0,
+      cpu: 0,
+      servers: 0,
+    };
+
+    const limits = {
+      ram: currentExtra.ram >= settings.resources.ram,
+      disk: currentExtra.disk >= settings.resources.disk,
+      cpu: currentExtra.cpu >= settings.resources.cpu,
+      servers: currentExtra.servers >= settings.resources.servers,
+      current: currentExtra,
+      max: settings.resources
+    };
+
+    res.json(limits);
   });
 
   async function enabledCheck(req, res) {

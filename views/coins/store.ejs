@@ -60,12 +60,45 @@
           <% } %>
         ];
 
+        let resourceLimits = null;
+
+        async function checkResourceLimits() {
+          try {
+            const response = await fetch('/check-resource-limits');
+            if (!response.ok) throw new Error('Failed to fetch resource limits');
+            resourceLimits = await response.json();
+            updateProductDisplay();
+            updatePackageDisplay();
+          } catch (error) {
+            console.error('Error checking resource limits:', error);
+          }
+        }
+
+        function isPackageAvailable(pkg) {
+          if (!resourceLimits) return true;
+          
+          const { current, max } = resourceLimits;
+          return !(
+            (current.ram + (pkg.resources.ram * <%= settings.api.client.coins.store.ram.per %>) > max.ram) ||
+            (current.cpu + (pkg.resources.cpu * <%= settings.api.client.coins.store.cpu.per %>) > max.cpu) ||
+            (current.disk + (pkg.resources.disk * <%= settings.api.client.coins.store.disk.per %>) > max.disk) ||
+            (current.servers + pkg.resources.servers > max.servers)
+          );
+        }
+
         function updateProductDisplay() {
           const productList = document.getElementById('productList');
           productList.innerHTML = '';
 
           products.forEach(product => {
-            const cost = `${product.costZTT} <%= settings.website.coins %>` 
+            const cost = `${product.costZTT} <%= settings.website.coins %>`;
+            const isAtLimit = resourceLimits && resourceLimits[product.type];
+            const buttonClass = isAtLimit 
+              ? 'bg-gray-500 cursor-not-allowed opacity-50' 
+              : 'bg-[#0a9875] hover:bg-[#0cae86]';
+            const buttonText = isAtLimit ? 'Max Limit Reached' : 'Purchase';
+            const buttonLink = isAtLimit ? 'javascript:void(0)' : `/buy?type=${product.type}&amount=1`;
+            
             const productHTML = `
               <div class="bg-[#162027] rounded-lg overflow-hidden border border-white/5 shadow-sm hover:shadow transition-all duration-300 flex flex-col h-full">
                 <div class="p-4">
@@ -76,10 +109,9 @@
                     </span>
                   </div>
                 </div>
-                <!-- Added divider and moved purchase button to bottom -->
                 <div class="mt-auto p-3 bg-[#10181e]/50 border-t border-white/10">
-                  <a href="/buy?type=${product.type}&amount=1" class="w-full inline-flex justify-center items-center rounded-lg bg-[#0a9875] px-2 py-1.5 text-xs font-medium text-white hover:bg-[#0cae86] transition-colors">
-                    Purchase
+                  <a href="${buttonLink}" class="w-full inline-flex justify-center items-center rounded-lg ${buttonClass} px-2 py-1.5 text-xs font-medium text-white transition-colors">
+                    ${buttonText}
                   </a>
                 </div>
               </div>`;
@@ -94,6 +126,12 @@
           packages.forEach(pkg => {
             const highlightClass = pkg.highlight ? 'border border-[#0a9875]/30' : 'border border-white/5';
             const highlightShadow = pkg.highlight ? 'shadow-md shadow-[#0a9875]/5' : 'shadow-md';
+            const isAvailable = isPackageAvailable(pkg);
+            const buttonClass = isAvailable 
+              ? 'bg-[#0a9875] hover:bg-[#0cae86]' 
+              : 'bg-gray-500 cursor-not-allowed opacity-50';
+            const buttonText = isAvailable ? 'Purchase Package' : 'Max Limit Reached';
+            const buttonLink = isAvailable ? `/buy-package?id=${pkg.id}` : 'javascript:void(0)';
             
             const packageHTML = `
               <div class="bg-gradient-to-br from-[#162027]/80 to-[#162027]/40 rounded-xl overflow-hidden ${highlightClass} ${highlightShadow} hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
@@ -108,7 +146,6 @@
                     </span>
                   </div>
                   
-                  <!-- Resource Grid -->
                   <div class="grid grid-cols-2 gap-3">
                     <div class="bg-[#10181e]/50 rounded-lg p-3">
                       <div class="text-xs text-zinc-400">RAM</div>
@@ -129,10 +166,9 @@
                   </div>
                 </div>
                 
-                <!-- Purchase Button -->
                 <div class="mt-auto p-3 bg-[#10181e]/50 border-t border-white/10">
-                  <a href="/buy-package?id=${pkg.id}" class="w-full inline-flex justify-center items-center rounded-lg bg-[#0a9875] px-3 py-2 text-sm font-medium text-white hover:bg-[#0cae86] transition-colors">
-                    Purchase Package
+                  <a href="${buttonLink}" class="w-full inline-flex justify-center items-center rounded-lg ${buttonClass} px-3 py-2 text-sm font-medium text-white transition-colors">
+                    ${buttonText}
                   </a>
                 </div>
               </div>`;
@@ -140,8 +176,11 @@
           });
         }
         
-        updateProductDisplay();
-        updatePackageDisplay();
+        // Initial load
+        checkResourceLimits();
+        
+        // Refresh limits every 30 seconds
+        setInterval(checkResourceLimits, 30000);
       </script>
       <%- include('../components/footer') %>
     </div>

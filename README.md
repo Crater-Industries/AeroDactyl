@@ -83,7 +83,7 @@ Making the dashboard runs on startup:
 To stop a currently running AeroDactyl instance, use `pm2 stop AeroDactyl`
 
 # Credits
-<strong>1.1</strong> All our work is made by the XaloraLabs Team. Thanks to everyone.
+<strong>1.1</strong> Made with ❤️ by Team Aerodactyl  
 
 # Nginx Proxy Config
 
